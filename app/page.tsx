@@ -3,16 +3,49 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Play, Award, TrendingUp, Video, Youtube, Search, Zap, ChevronRight, ChevronLeft, Menu, X, Star, CheckCircle, ArrowDown, BarChart3, DollarSign, Users, Target, Settings, Shield, Lightbulb, Clock } from 'lucide-react';
 
+interface ReelType {
+  title: string;
+  views: string;
+  thumbnail: string;
+  duration: string;
+  videoUrl: string;
+}
+
+interface ServiceType {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  features: string[];
+  price: string;
+}
+
+interface PortfolioType {
+  title: string;
+  result: string;
+  image: string;
+  description: string;
+  videoUrl: string;
+}
+
+interface TestimonialType {
+  name: string;
+  role: string;
+  content: string;
+  rating: number;
+  avatar: string;
+}
+
 export default function Portfolio() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentReelPage, setCurrentReelPage] = useState(0);
   const [autoScrollPosition, setAutoScrollPosition] = useState(0);
-  const [selectedVideo, setSelectedVideo] = useState(null);
-  const [isVideoPlaying, setIsVideoPlaying] = useState({});
-  const scrollRef = useRef(null);
-  const videoRefs = useRef({});
+  const [selectedVideo, setSelectedVideo] = useState<ReelType | null>(null);
+  const [selectedPortfolio, setSelectedPortfolio] = useState<PortfolioType | null>(null);
+  const [isVideoPlaying, setIsVideoPlaying] = useState<Record<string, boolean>>({});
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const videoRefs = useRef<Record<string, HTMLVideoElement>>({});
 
-  const reels = [
+  const reels: ReelType[] = [
     { 
       title: "Gaming Montage - 4K Edit", 
       views: "2.5M",
@@ -71,118 +104,118 @@ export default function Portfolio() {
     }
   ];
 
-  const services = [
+  const services: ServiceType[] = [
     {
       icon: <Settings className="w-8 h-8" />,
       title: "Channel Setup & Optimization",
       description: "Complete professional channel creation and branding",
       features: ["Channel Art & Logo", "About Section", "Verification Setup", "Monetization Ready"],
-      price: "From $80"
+      price: "From $50"
     },
     {
       icon: <Search className="w-8 h-8" />,
       title: "YouTube SEO & Growth",
       description: "Rank higher and dominate search results organically",
       features: ["Keyword Research", "Tag Optimization", "Description Writing", "Thumbnail Design"],
-      price: "From $95"
+      price: "From $30"
     },
     {
       icon: <Video className="w-8 h-8" />,
       title: "Video Optimization",
       description: "Professional video editing and enhancement services",
       features: ["High-CTR Titles", "Pro Thumbnails", "Subtitle Creation", "Shorts Repurposing"],
-      price: "From $30"
+      price: "From $20"
     },
     {
       icon: <BarChart3 className="w-8 h-8" />,
       title: "Channel Management",
       description: "Complete hands-free channel operations and growth",
       features: ["Daily Uploading", "Community Management", "Analytics Reports", "Content Calendar"],
-      price: "From $99"
+      price: "From $50"
     },
     {
       icon: <DollarSign className="w-8 h-8" />,
       title: "Monetization Services",
       description: "Maximize revenue with multiple income streams",
       features: ["AdSense Setup", "Sponsorship Deals", "Affiliate Marketing", "Revenue Boost"],
-      price: "From $85"
+      price: "From $300"
     },
     {
       icon: <Users className="w-8 h-8" />,
       title: "Audience Growth Strategies",
       description: "Organic growth campaigns that actually work",
       features: ["Subscriber Growth", "Engagement Boost", "Viral Strategy", "Cross-Platform"],
-      price: "From $90"
+      price: "From $40"
     },
     {
       icon: <Zap className="w-8 h-8" />,
       title: "YouTube Shorts Services",
       description: "Leverage shorts for explosive viral growth",
       features: ["Shorts Creation", "Viral Optimization", "Hashtag Research", "Shorts Monetization"],
-      price: "From $65"
+      price: "From $20"
     },
     {
       icon: <Shield className="w-8 h-8" />,
       title: "Channel Recovery & Fixing",
       description: "Resolve issues and restore your channel's health",
       features: ["Strike Appeals", "Copyright Claims", "Shadowban Fix", "Account Recovery"],
-      price: "From $95"
+      price: "From $60"
     },
     {
       icon: <Lightbulb className="w-8 h-8" />,
       title: "Content Strategy",
       description: "Data-driven content planning for sustainable growth",
       features: ["Niche Research", "Upload Schedule", "Viral Ideation", "Seasonal Planning"],
-      price: "From $75"
+      price: "From $50"
     }
   ];
 
-  const portfolio = [
+  const portfolio: PortfolioType[] = [
     { 
-      title: "Tech Channel Growth", 
-      result: "0→150K subs", 
+      title: "Video Editing", 
+      result: "Professional Edits", 
       image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500&h=350&fit=crop",
-      description: "6 months growth strategy",
+      description: "High-quality video editing",
       videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
     },
     { 
-      title: "Fitness Brand Video", 
-      result: "2.8M+ views", 
+      title: "Thumbnail Design", 
+      result: "Eye-Catching Designs", 
       image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500&h=350&fit=crop",
-      description: "Viral transformation series",
+      description: "Professional thumbnails",
       videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
     },
     { 
-      title: "Finance Cash Cow", 
-      result: "$8K/month", 
+      title: "Graphic Designing", 
+      result: "Creative Graphics", 
       image: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=500&h=350&fit=crop",
-      description: "Automated revenue system",
+      description: "Custom graphics & branding",
       videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
     },
     { 
-      title: "Gaming Montage Series", 
-      result: "850K+ views", 
+      title: "Channel Branding", 
+      result: "Complete Branding", 
       image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500&h=350&fit=crop",
-      description: "High-energy edits",
+      description: "Channel art & assets",
       videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
     },
     { 
-      title: "Educational SEO Success", 
-      result: "Ranked #1", 
+      title: "SEO Optimization", 
+      result: "Top Rankings", 
       image: "https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=500&h=350&fit=crop",
-      description: "Top search rankings",
+      description: "YouTube SEO services",
       videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4"
     },
     { 
-      title: "Lifestyle Vlog Channel", 
-      result: "400% boost", 
+      title: "Content Strategy", 
+      result: "Growth Strategy", 
       image: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=500&h=350&fit=crop",
-      description: "Engagement explosion",
+      description: "Strategic planning",
       videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4"
     }
   ];
 
-  const testimonials = [
+  const testimonials: TestimonialType[] = [
     { 
       name: "Alex Martinez", 
       role: "Tech YouTuber • 250K Subs", 
@@ -206,6 +239,14 @@ export default function Portfolio() {
     }
   ];
 
+  const handlePortfolioClick = (project: PortfolioType) => {
+    setSelectedPortfolio(project);
+  };
+
+  const closePortfolioPopup = () => {
+    setSelectedPortfolio(null);
+  };
+
   useEffect(() => {
     const interval = setInterval(() => {
       setAutoScrollPosition((prev) => {
@@ -217,7 +258,7 @@ export default function Portfolio() {
     return () => clearInterval(interval);
   }, [reels.length]);
 
-  const handleVideoClick = (reel) => {
+  const handleVideoClick = (reel: ReelType) => {
     setSelectedVideo(reel);
   };
 
@@ -225,11 +266,11 @@ export default function Portfolio() {
     setSelectedVideo(null);
   };
 
-  const toggleVideoPlay = (id) => {
+  const toggleVideoPlay = (id: string) => {
     const video = videoRefs.current[id];
     if (video) {
       if (video.paused) {
-        video.play().catch(err => console.log('Play error:', err));
+        video.play().catch((err: Error) => console.log('Play error:', err));
         setIsVideoPlaying(prev => ({ ...prev, [id]: true }));
       } else {
         video.pause();
@@ -250,7 +291,7 @@ export default function Portfolio() {
     setCurrentReelPage((prev) => (prev - 1 + totalPages) % totalPages);
   };
 
-  const scrollToSection = (id) => {
+  const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
@@ -396,8 +437,8 @@ export default function Portfolio() {
         
         <div className="relative z-10 max-w-7xl mx-auto px-4 text-center py-20">
           <div className="inline-block mb-8 relative">
-            <div className="w-48 h-48 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 p-1 shadow-2xl shadow-cyan-500/50 animate-pulse">
-              <div className="w-full h-full rounded-full bg-gray-800 flex items-center justify-center text-4xl font-bold text-white">
+            <div className="w-48 h-48 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 p-1 shadow-2xl shadow-cyan-500/50 animate-pulse flex items-center justify-center">
+              <div className="w-full h-full rounded-full bg-gray-800 flex items-center justify-center text-6xl font-bold text-white">
                 F
               </div>
             </div>
@@ -490,10 +531,12 @@ export default function Portfolio() {
                   muted
                   playsInline
                   onMouseEnter={(e) => {
-                    e.target.play().catch(err => console.log('Play error:', err));
+                    const target = e.target as HTMLVideoElement;
+                    target.play().catch((err: Error) => console.log('Play error:', err));
                   }}
                   onMouseLeave={(e) => {
-                    e.target.pause();
+                    const target = e.target as HTMLVideoElement;
+                    target.pause();
                   }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-60 group-hover/card:opacity-80 transition"></div>
@@ -510,11 +553,6 @@ export default function Portfolio() {
                     <span className="text-cyan-400 font-semibold">{reel.views} views</span>
                     <span className="bg-black/50 backdrop-blur-sm px-2 py-1 rounded text-sm">{reel.duration}</span>
                   </div>
-                </div>
-
-                <div className="absolute top-4 right-4 bg-red-600 px-3 py-1 rounded-full text-xs font-bold flex items-center space-x-1 z-10">
-                  <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                  <span>LIVE</span>
                 </div>
               </div>
             ))}
@@ -705,6 +743,7 @@ export default function Portfolio() {
             {portfolio.map((project, idx) => (
               <div 
                 key={idx}
+                onClick={() => handlePortfolioClick(project)}
                 className="group relative overflow-hidden rounded-2xl cursor-pointer border-2 border-cyan-500/20 hover:border-cyan-400 transition-all duration-500"
               >
                 <div className="aspect-video overflow-hidden relative">
@@ -713,19 +752,14 @@ export default function Portfolio() {
                       if (el) videoRefs.current[`portfolio-${idx}`] = el;
                     }}
                     src={project.videoUrl}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-125"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     loop
                     muted
                     playsInline
-                    onMouseEnter={(e) => {
-                      e.target.play().catch(err => console.log('Play error:', err));
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.pause();
-                    }}
+                    autoPlay
                   />
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300 flex items-end p-6">
                   <div>
                     <h3 className="text-white text-2xl font-bold mb-2">{project.title}</h3>
                     <p className="text-cyan-300 font-semibold text-lg mb-1">{project.result}</p>
@@ -735,11 +769,49 @@ export default function Portfolio() {
                 <div className="absolute top-4 right-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg z-10">
                   {project.result}
                 </div>
+                
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition z-20">
+                  <div className="w-16 h-16 rounded-full bg-cyan-500 flex items-center justify-center animate-pulse">
+                    <Play className="w-8 h-8 text-white ml-1" fill="white" />
+                  </div>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
+
+      {selectedPortfolio && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
+          onClick={closePortfolioPopup}
+        >
+          <div 
+            className="relative w-full max-w-4xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={closePortfolioPopup}
+              className="absolute -top-12 right-0 text-white hover:text-cyan-400 transition"
+            >
+              <X className="w-8 h-8" />
+            </button>
+            <div className="bg-zinc-950 rounded-2xl overflow-hidden border-2 border-cyan-400 shadow-2xl shadow-cyan-500/50">
+              <video
+                src={selectedPortfolio.videoUrl}
+                className="w-full aspect-video"
+                controls
+                autoPlay
+              />
+              <div className="p-6">
+                <h3 className="text-2xl font-bold text-white mb-2">{selectedPortfolio.title}</h3>
+                <p className="text-cyan-400 font-semibold text-lg mb-2">{selectedPortfolio.result}</p>
+                <p className="text-gray-400">{selectedPortfolio.description}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <section id="testimonials" className="py-20 px-4 bg-gradient-to-b from-zinc-950 via-black to-zinc-950 relative overflow-hidden">
         <div className="absolute inset-0 opacity-20">
