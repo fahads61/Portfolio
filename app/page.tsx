@@ -47,60 +47,60 @@ export default function Portfolio() {
 
   const reels: ReelType[] = [
     { 
-      title: "Gaming Montage - 4K Edit", 
+      title: "Cinematic Color Grading", 
       views: "2.5M",
-      thumbnail: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=600&fit=crop",
+      thumbnail: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=400&h=600&fit=crop",
       duration: "0:45",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+      videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4"
     },
     { 
-      title: "Tech Review - Pro Setup", 
+      title: "Motion Graphics Intro", 
       views: "1.8M",
-      thumbnail: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400&h=600&fit=crop",
+      thumbnail: "https://images.unsplash.com/photo-1536240478700-b869070f9279?w=400&h=600&fit=crop",
       duration: "1:20",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+      videoUrl: "https://www.w3schools.com/html/movie.mp4"
     },
     { 
-      title: "Fitness Transformation Journey", 
+      title: "Product Video - 4K", 
       views: "3.2M",
-      thumbnail: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=600&fit=crop",
+      thumbnail: "https://images.unsplash.com/photo-1590650153855-d9e808231d41?w=400&h=600&fit=crop",
       duration: "0:58",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+      videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4"
     },
     { 
-      title: "Travel Cinematic Vlog", 
+      title: "YouTube Vlog Edit Pro", 
       views: "1.5M",
-      thumbnail: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&h=600&fit=crop",
-      duration: "1:15",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
-    },
-    { 
-      title: "Cooking Tutorial - Quick Recipe", 
-      views: "2.1M",
-      thumbnail: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=400&h=600&fit=crop",
-      duration: "0:35",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4"
-    },
-    { 
-      title: "Business Growth Strategy", 
-      views: "980K",
-      thumbnail: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=400&h=600&fit=crop",
-      duration: "1:05",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4"
-    },
-    { 
-      title: "Lifestyle Content Creator", 
-      views: "1.2M",
       thumbnail: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=400&h=600&fit=crop",
-      duration: "0:52",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4"
+      duration: "1:15",
+      videoUrl: "https://www.w3schools.com/html/movie.mp4"
     },
     { 
-      title: "Educational Tutorial Series", 
+      title: "Podcast Editing & Effects", 
+      views: "2.1M",
+      thumbnail: "https://images.unsplash.com/photo-1589903308904-1010c2294adc?w=400&h=600&fit=crop",
+      duration: "0:35",
+      videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4"
+    },
+    { 
+      title: "Commercial Ad Edit", 
+      views: "980K",
+      thumbnail: "https://images.unsplash.com/photo-1635496570154-75652e3ff292?w=400&h=600&fit=crop",
+      duration: "1:05",
+      videoUrl: "https://www.w3schools.com/html/movie.mp4"
+    },
+    { 
+      title: "Reels & Shorts Editing", 
+      views: "1.2M",
+      thumbnail: "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=400&h=600&fit=crop",
+      duration: "0:52",
+      videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4"
+    },
+    { 
+      title: "Documentary Style Edit", 
       views: "890K",
-      thumbnail: "https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=400&h=600&fit=crop",
+      thumbnail: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&h=600&fit=crop",
       duration: "1:30",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4"
+      videoUrl: "https://www.w3schools.com/html/movie.mp4"
     }
   ];
 
@@ -172,46 +172,46 @@ export default function Portfolio() {
 
   const portfolio: PortfolioType[] = [
     { 
-      title: "Video Editing", 
-      result: "Professional Edits", 
-      image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500&h=350&fit=crop",
-      description: "High-quality video editing",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+      title: "High-CTR Thumbnail Portfolio", 
+      result: "65% CTR Boost", 
+      image: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=500&h=350&fit=crop",
+      description: "Designed 50+ viral thumbnails with proven click-through rates",
+      videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4"
     },
     { 
-      title: "Thumbnail Design", 
-      result: "Eye-Catching Designs", 
-      image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500&h=350&fit=crop",
-      description: "Professional thumbnails",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+      title: "Professional Video Montage", 
+      result: "1M+ Views", 
+      image: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=500&h=350&fit=crop",
+      description: "Cinematic editing with color grading and motion graphics",
+      videoUrl: "https://www.w3schools.com/html/movie.mp4"
     },
     { 
-      title: "Graphic Designing", 
-      result: "Creative Graphics", 
-      image: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=500&h=350&fit=crop",
-      description: "Custom graphics & branding",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+      title: "Brand Identity Package", 
+      result: "Complete Rebrand", 
+      image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=500&h=350&fit=crop",
+      description: "Logo, banner, intro, and complete channel branding",
+      videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4"
     },
     { 
-      title: "Channel Branding", 
-      result: "Complete Branding", 
-      image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500&h=350&fit=crop",
-      description: "Channel art & assets",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
+      title: "YouTube Shorts Series", 
+      result: "500K+ Subscribers", 
+      image: "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=500&h=350&fit=crop",
+      description: "Edited 100+ viral shorts with optimized engagement",
+      videoUrl: "https://www.w3schools.com/html/movie.mp4"
     },
     { 
-      title: "SEO Optimization", 
-      result: "Top Rankings", 
-      image: "https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=500&h=350&fit=crop",
-      description: "YouTube SEO services",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4"
+      title: "Thumbnail A/B Testing", 
+      result: "3x More Clicks", 
+      image: "https://images.unsplash.com/photo-1626785774573-4b799315345d?w=500&h=350&fit=crop",
+      description: "Data-driven thumbnail designs that outperform competitors",
+      videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4"
     },
     { 
-      title: "Content Strategy", 
-      result: "Growth Strategy", 
-      image: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=500&h=350&fit=crop",
-      description: "Strategic planning",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4"
+      title: "Podcast Video Production", 
+      result: "Professional Quality", 
+      image: "https://images.unsplash.com/photo-1590650153855-d9e808231d41?w=500&h=350&fit=crop",
+      description: "Full podcast editing with graphics and subtitles",
+      videoUrl: "https://www.w3schools.com/html/movie.mp4"
     }
   ];
 
@@ -437,9 +437,17 @@ export default function Portfolio() {
         
         <div className="relative z-10 max-w-7xl mx-auto px-4 text-center py-20">
           <div className="inline-block mb-8 relative">
-            <div className="w-48 h-48 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 p-1 shadow-2xl shadow-cyan-500/50 animate-pulse flex items-center justify-center">
-              <div className="w-full h-full rounded-full bg-gray-800 flex items-center justify-center text-6xl font-bold text-white">
-                F
+            <div className="w-48 h-48 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 p-1 shadow-2xl shadow-cyan-500/50 animate-pulse">
+              <div className="w-full h-full rounded-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center overflow-hidden relative">
+                <img 
+                  src="/profile.jpg"
+                  alt="Fahad - YouTube Specialist"
+                  className="w-full h-full object-cover absolute inset-0 z-10"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                  }}
+                />
               </div>
             </div>
             <div className="absolute -bottom-2 -right-2 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full px-4 py-2 text-sm font-bold shadow-lg">
