@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Award, TrendingUp, Video, Youtube, Search, Zap, ChevronRight, ChevronLeft, Menu, X, Star, CheckCircle, ArrowDown, BarChart3, DollarSign, Users, Target, Settings, Shield, Lightbulb, Clock } from 'lucide-react';
+import { Play, Award, TrendingUp, Video, Youtube, Search, Zap, ChevronRight, ChevronLeft, Menu, X, Star, CheckCircle, ArrowDown, BarChart3, DollarSign, Users, Target, Settings, Shield, Lightbulb, Clock, Facebook, Instagram, Linkedin, Download, ArrowLeft, Palette, Film, Sparkles, Layout, TrendingUp as Growth, PenTool } from 'lucide-react';
 
 interface ReelType {
   title: string;
@@ -25,6 +25,7 @@ interface PortfolioType {
   image: string;
   description: string;
   videoUrl: string;
+  category: string;
 }
 
 interface TestimonialType {
@@ -42,65 +43,67 @@ export default function Portfolio() {
   const [selectedVideo, setSelectedVideo] = useState<ReelType | null>(null);
   const [selectedPortfolio, setSelectedPortfolio] = useState<PortfolioType | null>(null);
   const [isVideoPlaying, setIsVideoPlaying] = useState<Record<string, boolean>>({});
+  const [showPortfolioPage, setShowPortfolioPage] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const videoRefs = useRef<Record<string, HTMLVideoElement>>({});
 
   const reels: ReelType[] = [
     { 
-      title: "Cinematic Color Grading", 
+      title: "Gaming Montage - 4K Edit", 
       views: "2.5M",
-      thumbnail: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=400&h=600&fit=crop",
+      thumbnail: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=600&fit=crop",
       duration: "0:45",
-      videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4"
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
     },
     { 
-      title: "Motion Graphics Intro", 
+      title: "Tech Review - Pro Setup", 
       views: "1.8M",
-      thumbnail: "https://images.unsplash.com/photo-1536240478700-b869070f9279?w=400&h=600&fit=crop",
+      thumbnail: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400&h=600&fit=crop",
       duration: "1:20",
-      videoUrl: "https://www.w3schools.com/html/movie.mp4"
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
     },
     { 
-      title: "Product Video - 4K", 
+      title: "Fitness Transformation Journey", 
       views: "3.2M",
-      thumbnail: "https://images.unsplash.com/photo-1590650153855-d9e808231d41?w=400&h=600&fit=crop",
+      thumbnail: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=600&fit=crop",
       duration: "0:58",
-      videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4"
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
     },
     { 
-      title: "YouTube Vlog Edit Pro", 
+      title: "Travel Cinematic Vlog", 
       views: "1.5M",
-      thumbnail: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=400&h=600&fit=crop",
+      thumbnail: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&h=600&fit=crop",
       duration: "1:15",
-      videoUrl: "https://www.w3schools.com/html/movie.mp4"
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
     },
     { 
-      title: "Podcast Editing & Effects", 
+      title: "Cooking Tutorial - Quick Recipe", 
       views: "2.1M",
-      thumbnail: "https://images.unsplash.com/photo-1589903308904-1010c2294adc?w=400&h=600&fit=crop",
+      thumbnail: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=400&h=600&fit=crop",
       duration: "0:35",
-      videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4"
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4"
     },
     { 
-      title: "Commercial Ad Edit", 
+      title: "Business Growth Strategy", 
       views: "980K",
-      thumbnail: "https://images.unsplash.com/photo-1635496570154-75652e3ff292?w=400&h=600&fit=crop",
+      thumbnail: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=400&h=600&fit=crop",
       duration: "1:05",
-      videoUrl: "https://www.w3schools.com/html/movie.mp4"
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4"
     },
     { 
-      title: "Reels & Shorts Editing", 
+      title: "Lifestyle Content Creator", 
       views: "1.2M",
-      thumbnail: "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=400&h=600&fit=crop",
+      thumbnail: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=400&h=600&fit=crop",
       duration: "0:52",
-      videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4"
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4"
     },
     { 
-      title: "Documentary Style Edit", 
+      title: "Educational Tutorial Series", 
       views: "890K",
-      thumbnail: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&h=600&fit=crop",
+      thumbnail: "https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=400&h=600&fit=crop",
       duration: "1:30",
-      videoUrl: "https://www.w3schools.com/html/movie.mp4"
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4"
     }
   ];
 
@@ -170,50 +173,223 @@ export default function Portfolio() {
     }
   ];
 
-  const portfolio: PortfolioType[] = [
+  const allPortfolio: PortfolioType[] = [
+    // Video Editing
     { 
-      title: "High-CTR Thumbnail Portfolio", 
-      result: "65% CTR Boost", 
-      image: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=500&h=350&fit=crop",
-      description: "Designed 50+ viral thumbnails with proven click-through rates",
-      videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4"
+      title: "Gaming Montage Pro Edit", 
+      result: "2.5M+ Views", 
+      image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500&h=350&fit=crop",
+      description: "Professional gaming montage with color grading",
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+      category: "video-editing"
     },
     { 
-      title: "Professional Video Montage", 
-      result: "1M+ Views", 
-      image: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=500&h=350&fit=crop",
-      description: "Cinematic editing with color grading and motion graphics",
-      videoUrl: "https://www.w3schools.com/html/movie.mp4"
+      title: "Cinematic Travel Vlog", 
+      result: "1.8M+ Views", 
+      image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=500&h=350&fit=crop",
+      description: "Cinematic storytelling with transitions",
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+      category: "video-editing"
     },
     { 
-      title: "Brand Identity Package", 
-      result: "Complete Rebrand", 
-      image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=500&h=350&fit=crop",
-      description: "Logo, banner, intro, and complete channel branding",
-      videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4"
+      title: "Tech Review Edit", 
+      result: "1.5M+ Views", 
+      image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500&h=350&fit=crop",
+      description: "Clean tech review with motion graphics",
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+      category: "video-editing"
     },
     { 
-      title: "YouTube Shorts Series", 
-      result: "500K+ Subscribers", 
-      image: "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=500&h=350&fit=crop",
-      description: "Edited 100+ viral shorts with optimized engagement",
-      videoUrl: "https://www.w3schools.com/html/movie.mp4"
+      title: "Fitness Transformation", 
+      result: "3.2M+ Views", 
+      image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500&h=350&fit=crop",
+      description: "Motivational fitness video editing",
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+      category: "video-editing"
+    },
+    
+    // Thumbnail Design
+    { 
+      title: "Gaming Thumbnail Pack", 
+      result: "15% CTR", 
+      image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500&h=350&fit=crop",
+      description: "Eye-catching gaming thumbnails",
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+      category: "thumbnail"
     },
     { 
-      title: "Thumbnail A/B Testing", 
-      result: "3x More Clicks", 
+      title: "Tech Review Thumbnails", 
+      result: "18% CTR", 
+      image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500&h=350&fit=crop",
+      description: "Professional tech thumbnails",
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+      category: "thumbnail"
+    },
+    { 
+      title: "Vlog Thumbnail Series", 
+      result: "12% CTR", 
+      image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=500&h=350&fit=crop",
+      description: "Lifestyle vlog thumbnails",
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+      category: "thumbnail"
+    },
+    { 
+      title: "Business Thumbnails", 
+      result: "20% CTR", 
+      image: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=500&h=350&fit=crop",
+      description: "Professional business thumbnails",
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+      category: "thumbnail"
+    },
+    
+    // Graphic Design
+    { 
+      title: "Channel Banner Design", 
+      result: "Modern & Clean", 
       image: "https://images.unsplash.com/photo-1626785774573-4b799315345d?w=500&h=350&fit=crop",
-      description: "Data-driven thumbnail designs that outperform competitors",
-      videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4"
+      description: "Professional channel art",
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+      category: "graphic-design"
     },
     { 
-      title: "Podcast Video Production", 
-      result: "Professional Quality", 
-      image: "https://images.unsplash.com/photo-1590650153855-d9e808231d41?w=500&h=350&fit=crop",
-      description: "Full podcast editing with graphics and subtitles",
-      videoUrl: "https://www.w3schools.com/html/movie.mp4"
+      title: "Social Media Graphics", 
+      result: "Complete Pack", 
+      image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=500&h=350&fit=crop",
+      description: "Instagram, Twitter, Facebook graphics",
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+      category: "graphic-design"
+    },
+    { 
+      title: "Brand Identity Pack", 
+      result: "Full Branding", 
+      image: "https://images.unsplash.com/photo-1558655146-d09347e92766?w=500&h=350&fit=crop",
+      description: "Logo, colors, typography",
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+      category: "graphic-design"
+    },
+    { 
+      title: "Motion Graphics Pack", 
+      result: "Animated Assets", 
+      image: "https://images.unsplash.com/photo-1572044162444-ad60f128bdea?w=500&h=350&fit=crop",
+      description: "Intros, outros, lower thirds",
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+      category: "graphic-design"
+    },
+    
+    // Logo Design
+    { 
+      title: "Gaming Logo Design", 
+      result: "Esports Ready", 
+      image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500&h=350&fit=crop",
+      description: "Modern gaming logo",
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+      category: "logo"
+    },
+    { 
+      title: "Tech Channel Logo", 
+      result: "Professional", 
+      image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500&h=350&fit=crop",
+      description: "Tech-focused logo design",
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+      category: "logo"
+    },
+    { 
+      title: "Business Logo Suite", 
+      result: "Multi-format", 
+      image: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=500&h=350&fit=crop",
+      description: "Complete logo package",
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+      category: "logo"
+    },
+    { 
+      title: "Lifestyle Brand Logo", 
+      result: "Minimal & Clean", 
+      image: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=500&h=350&fit=crop",
+      description: "Elegant lifestyle logo",
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+      category: "logo"
+    },
+    
+    // Channel Branding
+    { 
+      title: "Complete Channel Setup", 
+      result: "5K to 50K Subs", 
+      image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=500&h=350&fit=crop",
+      description: "Full channel optimization",
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+      category: "branding"
+    },
+    { 
+      title: "Gaming Channel Rebrand", 
+      result: "10K to 100K", 
+      image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500&h=350&fit=crop",
+      description: "Complete rebranding project",
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+      category: "branding"
+    },
+    { 
+      title: "Tech Channel Launch", 
+      result: "0 to 25K in 6mo", 
+      image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500&h=350&fit=crop",
+      description: "New channel setup & growth",
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+      category: "branding"
+    },
+    { 
+      title: "Business Channel Brand", 
+      result: "Professional Setup", 
+      image: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=500&h=350&fit=crop",
+      description: "Corporate branding package",
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+      category: "branding"
+    },
+    
+    // SEO Optimization
+    { 
+      title: "SEO Boost - Gaming", 
+      result: "500% Growth", 
+      image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500&h=350&fit=crop",
+      description: "Complete SEO overhaul",
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+      category: "seo"
+    },
+    { 
+      title: "SEO Strategy - Tech", 
+      result: "Top 3 Rankings", 
+      image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500&h=350&fit=crop",
+      description: "Keyword optimization success",
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+      category: "seo"
+    },
+    { 
+      title: "Channel SEO Audit", 
+      result: "300% More Views", 
+      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&h=350&fit=crop",
+      description: "Full channel optimization",
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+      category: "seo"
+    },
+    { 
+      title: "Viral SEO Strategy", 
+      result: "1M+ Organic Views", 
+      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&h=350&fit=crop",
+      description: "Viral content optimization",
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+      category: "seo"
     }
   ];
+
+  const categories = [
+    { id: 'all', name: 'All Projects', icon: <Sparkles className="w-5 h-5" />, count: allPortfolio.length },
+    { id: 'video-editing', name: 'Video Editing', icon: <Film className="w-5 h-5" />, count: allPortfolio.filter(p => p.category === 'video-editing').length },
+    { id: 'thumbnail', name: 'Thumbnail Design', icon: <Palette className="w-5 h-5" />, count: allPortfolio.filter(p => p.category === 'thumbnail').length },
+    { id: 'graphic-design', name: 'Graphic Design', icon: <PenTool className="w-5 h-5" />, count: allPortfolio.filter(p => p.category === 'graphic-design').length },
+    { id: 'logo', name: 'Logo Design', icon: <Target className="w-5 h-5" />, count: allPortfolio.filter(p => p.category === 'logo').length },
+    { id: 'branding', name: 'Channel Branding', icon: <Layout className="w-5 h-5" />, count: allPortfolio.filter(p => p.category === 'branding').length },
+    { id: 'seo', name: 'SEO Optimization', icon: <Growth className="w-5 h-5" />, count: allPortfolio.filter(p => p.category === 'seo').length }
+  ];
+
+  const portfolio: PortfolioType[] = allPortfolio.slice(0, 6);
 
   const testimonials: TestimonialType[] = [
     { 
@@ -266,30 +442,9 @@ export default function Portfolio() {
     setSelectedVideo(null);
   };
 
-  const toggleVideoPlay = (id: string) => {
-    const video = videoRefs.current[id];
-    if (video) {
-      if (video.paused) {
-        video.play().catch((err: Error) => console.log('Play error:', err));
-        setIsVideoPlaying(prev => ({ ...prev, [id]: true }));
-      } else {
-        video.pause();
-        setIsVideoPlaying(prev => ({ ...prev, [id]: false }));
-      }
-    }
-  };
-
-  const reelsPerPage = 3;
-  const totalPages = Math.ceil(reels.length / reelsPerPage);
-  const currentReels = reels.slice(currentReelPage * reelsPerPage, (currentReelPage + 1) * reelsPerPage);
-
-  const nextReelPage = () => {
-    setCurrentReelPage((prev) => (prev + 1) % totalPages);
-  };
-
-  const prevReelPage = () => {
-    setCurrentReelPage((prev) => (prev - 1 + totalPages) % totalPages);
-  };
+  const filteredPortfolio = selectedCategory === 'all' 
+    ? allPortfolio 
+    : allPortfolio.filter(p => p.category === selectedCategory);
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -299,18 +454,279 @@ export default function Portfolio() {
     setIsMenuOpen(false);
   };
 
-  return (
-    <div className="min-h-screen bg-black text-white overflow-x-hidden">
-      <style>{`
-        @keyframes gradient {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-        }
-        .animate-gradient {
-          background-size: 200% 200%;
-          animation: gradient 3s ease infinite;
-        }
+  const openPortfolioPage = () => {
+    setShowPortfolioPage(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
+  const closePortfolioPage = () => {
+    setShowPortfolioPage(false);
+    setSelectedCategory('all');
+  };
+
+  if (showPortfolioPage) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-emerald-50/30 to-gray-50">
+        <style>{`
+          @keyframes fadeInUp {
+            from {
+              opacity: 0;
+              transform: translateY(30px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+
+          @keyframes scaleIn {
+            from {
+              opacity: 0;
+              transform: scale(0.9);
+            }
+            to {
+              opacity: 1;
+              transform: scale(1);
+            }
+          }
+
+          @keyframes slideInLeft {
+            from {
+              opacity: 0;
+              transform: translateX(-30px);
+            }
+            to {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          }
+
+          .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+          }
+
+          .animate-scale-in {
+            animation: scaleIn 0.5s ease-out forwards;
+          }
+
+          .animate-slide-in-left {
+            animation: slideInLeft 0.5s ease-out forwards;
+          }
+
+          .stagger-1 { animation-delay: 0.1s; opacity: 0; }
+          .stagger-2 { animation-delay: 0.2s; opacity: 0; }
+          .stagger-3 { animation-delay: 0.3s; opacity: 0; }
+          .stagger-4 { animation-delay: 0.4s; opacity: 0; }
+          .stagger-5 { animation-delay: 0.5s; opacity: 0; }
+          .stagger-6 { animation-delay: 0.6s; opacity: 0; }
+        `}</style>
+
+        {/* Header */}
+        <nav className="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-20">
+              <button 
+                onClick={closePortfolioPage}
+                className="flex items-center space-x-3 text-gray-900 hover:text-emerald-500 transition group"
+              >
+                <div className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center group-hover:bg-emerald-600 transition">
+                  <ArrowLeft className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <div className="text-sm text-gray-500">Back to</div>
+                  <div className="text-lg font-bold">Home</div>
+                </div>
+              </button>
+              
+              <div className="text-2xl font-bold text-gray-900">
+                My <span className="text-emerald-500">Portfolio</span>
+              </div>
+
+              <a 
+                href="https://www.upwork.com/freelancers/~01b4bda82598a073e9" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-6 py-2.5 rounded-lg hover:shadow-lg transition font-medium"
+              >
+                Hire Me
+              </a>
+            </div>
+          </div>
+        </nav>
+
+        {/* Hero Section */}
+        <section className="pt-32 pb-16 px-4">
+          <div className="max-w-7xl mx-auto text-center">
+            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 animate-fade-in-up">
+              My Creative <span className="text-emerald-500">Portfolio</span>
+            </h1>
+            <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto animate-fade-in-up stagger-1">
+              Explore my work across various categories - from video editing to SEO optimization. Each project represents dedication, creativity, and results-driven excellence.
+            </p>
+
+            {/* Category Filter */}
+            <div className="flex flex-wrap justify-center gap-3 mb-8">
+              {categories.map((cat, idx) => (
+                <button
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className={`flex items-center space-x-2 px-6 py-3 rounded-full font-semibold transition-all duration-300 animate-scale-in ${
+                    selectedCategory === cat.id
+                      ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-lg scale-105'
+                      : 'bg-white text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 border-2 border-gray-200'
+                  }`}
+                  style={{ animationDelay: `${idx * 0.1}s`, opacity: 0 }}
+                >
+                  {cat.icon}
+                  <span>{cat.name}</span>
+                  <span className={`px-2 py-0.5 rounded-full text-xs ${
+                    selectedCategory === cat.id ? 'bg-white/20' : 'bg-emerald-100 text-emerald-600'
+                  }`}>
+                    {cat.count}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Portfolio Grid */}
+        <section className="pb-20 px-4">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid md:grid-cols-3 gap-6">
+              {filteredPortfolio.map((project, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => handlePortfolioClick(project)}
+                  className="group relative overflow-hidden rounded-2xl cursor-pointer border-2 border-gray-200 hover:border-emerald-400 transition-all duration-500 shadow-lg hover:shadow-2xl bg-white animate-fade-in-up"
+                  style={{ animationDelay: `${(idx % 9) * 0.1}s`, opacity: 0 }}
+                >
+                  <div className="aspect-video overflow-hidden relative">
+                    <video
+                      ref={el => {
+                        if (el) videoRefs.current[`portfolio-${idx}`] = el;
+                      }}
+                      src={project.videoUrl}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      loop
+                      muted
+                      playsInline
+                      onMouseEnter={(e) => {
+                        const target = e.target as HTMLVideoElement;
+                        target.play().catch((err: Error) => console.log('Play error:', err));
+                      }}
+                      onMouseLeave={(e) => {
+                        const target = e.target as HTMLVideoElement;
+                        target.pause();
+                      }}
+                    />
+                  </div>
+                  
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300 flex items-end p-6">
+                    <div>
+                      <div className="text-emerald-400 text-sm font-semibold mb-2 uppercase tracking-wide">
+                        {categories.find(c => c.id === project.category)?.name}
+                      </div>
+                      <h3 className="text-white text-2xl font-bold mb-2">{project.title}</h3>
+                      <p className="text-gray-300 text-sm">{project.description}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="absolute top-4 right-4 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg z-10">
+                    {project.result}
+                  </div>
+                  
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition z-20">
+                    <div className="w-16 h-16 rounded-full bg-emerald-500 flex items-center justify-center animate-pulse shadow-2xl">
+                      <Play className="w-8 h-8 text-white ml-1" fill="white" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {filteredPortfolio.length === 0 && (
+              <div className="text-center py-20">
+                <div className="text-6xl mb-4">🎨</div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">No projects found</h3>
+                <p className="text-gray-600">Try selecting a different category</p>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-16 px-4 bg-gradient-to-r from-emerald-500 to-emerald-600">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              Ready to Start Your Project?
+            </h2>
+            <p className="text-xl text-emerald-50 mb-8">
+              Let's create something amazing together. Get in touch and bring your vision to life!
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <a 
+                href="https://www.upwork.com/freelancers/~01b4bda82598a073e9" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center space-x-2 bg-white text-emerald-600 px-8 py-4 rounded-lg text-lg font-semibold hover:shadow-2xl transition transform hover:scale-105"
+              >
+                <span>Hire Me Now</span>
+                <ChevronRight className="w-5 h-5" />
+              </a>
+              <button 
+                onClick={closePortfolioPage}
+                className="inline-flex items-center space-x-2 border-2 border-white text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white/10 transition"
+              >
+                <ArrowLeft className="w-5 h-5" />
+                <span>Back to Home</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* Video Popup */}
+        {selectedPortfolio && (
+          <div 
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
+            onClick={closePortfolioPopup}
+          >
+            <div 
+              className="relative w-full max-w-4xl animate-scale-in"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={closePortfolioPopup}
+                className="absolute -top-12 right-0 text-white hover:text-emerald-400 transition"
+              >
+                <X className="w-8 h-8" />
+              </button>
+              <div className="bg-white rounded-2xl overflow-hidden border-2 border-emerald-400 shadow-2xl">
+                <video
+                  src={selectedPortfolio.videoUrl}
+                  className="w-full aspect-video"
+                  controls
+                  autoPlay
+                />
+                <div className="p-6">
+                  <div className="text-emerald-500 text-sm font-semibold mb-2 uppercase">
+                    {categories.find(c => c.id === selectedPortfolio.category)?.name}
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{selectedPortfolio.title}</h3>
+                  <p className="text-emerald-500 font-semibold text-lg mb-2">{selectedPortfolio.result}</p>
+                  <p className="text-gray-600">{selectedPortfolio.description}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-white text-gray-900 overflow-x-hidden">
+      <style>{`
         @keyframes scroll {
           0% {
             transform: translateX(0);
@@ -329,30 +745,6 @@ export default function Portfolio() {
           }
         }
 
-        @keyframes blob {
-          0%, 100% {
-            transform: translate(0px, 0px) scale(1);
-          }
-          33% {
-            transform: translate(30px, -50px) scale(1.1);
-          }
-          66% {
-            transform: translate(-20px, 20px) scale(0.9);
-          }
-        }
-
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
-
         .animate-scroll-reels {
           display: flex;
           gap: 1.5rem;
@@ -362,154 +754,170 @@ export default function Portfolio() {
         .scroll-services-container {
           animation: scroll-services 30s linear infinite;
         }
+
+        .hero-circle {
+          position: absolute;
+          border-radius: 50%;
+          background: #4ade80;
+        }
+
+        .hero-brush {
+          position: absolute;
+          width: 150px;
+          height: 150px;
+          background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+          filter: blur(40px);
+          opacity: 0.6;
+        }
       `}</style>
 
-      <nav className="fixed w-full z-50 bg-black/98 backdrop-blur-xl border-b border-cyan-500/10">
+      {/* Navigation */}
+      <nav className="fixed w-full z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-cyan-500/50">
-                <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M13.5 2C13.5 2 15 3.5 15 6C15 8.5 13.5 10 13.5 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                  <path d="M21 6L3 2L5 12L3 22L21 18V6Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
-                  <circle cx="8" cy="12" r="1.5" fill="currentColor"/>
-                  <path d="M9 12H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <div className="text-2xl font-bold">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Fahad</span>
+            <div className="flex items-center space-x-2">
+              <div className="text-3xl font-bold text-gray-900">
+                FAHAD<span className="text-gray-400">.</span>
               </div>
             </div>
             
             <div className="hidden md:flex items-center space-x-8">
-              <button onClick={() => scrollToSection('home')} className="text-gray-500 hover:text-cyan-400 transition">Home</button>
-              <button onClick={() => scrollToSection('portfolio')} className="text-gray-500 hover:text-cyan-400 transition">Portfolio</button>
-              <button onClick={() => scrollToSection('services')} className="text-gray-500 hover:text-cyan-400 transition">Services</button>
-              <button onClick={() => scrollToSection('testimonials')} className="text-gray-500 hover:text-cyan-400 transition">Reviews</button>
+              <button onClick={() => scrollToSection('home')} className="text-gray-600 hover:text-gray-900 font-medium transition">Home</button>
+              <button onClick={() => scrollToSection('about')} className="text-gray-600 hover:text-gray-900 font-medium transition">About</button>
+              <button onClick={() => scrollToSection('services')} className="text-gray-600 hover:text-gray-900 font-medium transition">Services</button>
+              <button onClick={() => scrollToSection('portfolio')} className="text-gray-600 hover:text-gray-900 font-medium transition">Portfolio</button>
+              <button onClick={() => scrollToSection('testimonials')} className="text-gray-600 hover:text-gray-900 font-medium transition">Testimonials</button>
               <a 
                 href="https://www.upwork.com/freelancers/~01b4bda82598a073e9" 
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-gradient-to-r from-cyan-500 to-blue-600 px-6 py-3 rounded-lg hover:shadow-lg hover:shadow-cyan-500/50 transition transform hover:scale-105 font-semibold"
+                className="bg-emerald-500 text-white px-6 py-2.5 rounded-lg hover:bg-emerald-600 transition font-medium"
               >
-                Hire Me Now
+                Hire Me
               </a>
             </div>
 
-            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden text-cyan-400">
+            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden text-gray-900">
               {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
 
         {isMenuOpen && (
-          <div className="md:hidden bg-zinc-950 border-t border-cyan-500/10">
+          <div className="md:hidden bg-white border-t border-gray-200">
             <div className="px-4 pt-2 pb-4 space-y-3">
-              <button onClick={() => scrollToSection('home')} className="block text-gray-500 hover:text-cyan-400 py-2 w-full text-left">Home</button>
-              <button onClick={() => scrollToSection('portfolio')} className="block text-gray-500 hover:text-cyan-400 py-2 w-full text-left">Portfolio</button>
-              <button onClick={() => scrollToSection('services')} className="block text-gray-500 hover:text-cyan-400 py-2 w-full text-left">Services</button>
-              <button onClick={() => scrollToSection('testimonials')} className="block text-gray-500 hover:text-cyan-400 py-2 w-full text-left">Reviews</button>
+              <button onClick={() => scrollToSection('home')} className="block text-gray-600 hover:text-gray-900 py-2 w-full text-left font-medium">Home</button>
+              <button onClick={() => scrollToSection('about')} className="block text-gray-600 hover:text-gray-900 py-2 w-full text-left font-medium">About</button>
+              <button onClick={() => scrollToSection('services')} className="block text-gray-600 hover:text-gray-900 py-2 w-full text-left font-medium">Services</button>
+              <button onClick={() => scrollToSection('portfolio')} className="block text-gray-600 hover:text-gray-900 py-2 w-full text-left font-medium">Portfolio</button>
+              <button onClick={() => scrollToSection('testimonials')} className="block text-gray-600 hover:text-gray-900 py-2 w-full text-left font-medium">Testimonials</button>
               <a 
                 href="https://www.upwork.com/freelancers/~01b4bda82598a073e9" 
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block bg-gradient-to-r from-cyan-500 to-blue-600 px-6 py-3 rounded-lg text-center font-semibold"
+                className="block bg-emerald-500 text-white px-6 py-2.5 rounded-lg text-center font-medium"
               >
-                Hire Me Now
+                Hire Me
               </a>
             </div>
           </div>
         )}
       </nav>
 
-      <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-        <div className="absolute inset-0 bg-gradient-to-br from-black via-zinc-950 to-black">
-          <div className="absolute inset-0 opacity-30">
-            <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
-            <div className="absolute top-0 right-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
-            <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000"></div>
-          </div>
-          <div className="absolute inset-0" style={{
-            backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(6, 182, 212, 0.15) 1px, transparent 0)',
-            backgroundSize: '40px 40px'
-          }}></div>
-        </div>
+      {/* Hero Section */}
+      <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-white">
+        {/* Decorative Elements */}
+        <div className="hero-circle" style={{
+          top: '10%',
+          left: '8%',
+          width: '80px',
+          height: '80px',
+          background: '#4ade80'
+        }}></div>
         
-        <div className="relative z-10 max-w-7xl mx-auto px-4 text-center py-20">
-          <div className="inline-block mb-8 relative">
-            <div className="w-48 h-48 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 p-1 shadow-2xl shadow-cyan-500/50 animate-pulse">
-              <div className="w-full h-full rounded-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center overflow-hidden relative">
-                <img 
-                  src="/profile.jpg"
-                  alt="Fahad - YouTube Specialist"
-                  className="w-full h-full object-cover absolute inset-0 z-10"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                  }}
-                />
+        <div className="hero-brush" style={{
+          top: '15%',
+          right: '5%',
+        }}></div>
+        
+        <div className="max-w-7xl mx-auto px-4 py-20">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            {/* Left Content */}
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <p className="text-gray-600 text-lg">YouTube Growth Specialist</p>
+                <h1 className="text-6xl md:text-7xl font-bold leading-tight">
+                  Hi, I'm <span className="text-emerald-500">Fahad</span>
+                </h1>
+              </div>
+              
+              <p className="text-gray-600 text-lg leading-relaxed max-w-lg">
+                I'm a dedicated YouTube Growth Specialist helping content creators and businesses achieve explosive growth through professional YouTube services. From channel management to SEO optimization and monetization strategies, I turn channels into thriving online businesses.
+              </p>
+
+              <div className="flex flex-wrap gap-4 pt-4">
+                <button 
+                  onClick={openPortfolioPage}
+                  className="bg-gray-900 text-white px-8 py-3 rounded-lg hover:bg-gray-800 transition font-medium flex items-center gap-2"
+                >
+                  <Award className="w-5 h-5" />
+                  View All Portfolio
+                </button>
+                <a 
+                  href="https://www.upwork.com/freelancers/~01b4bda82598a073e9" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="border-2 border-gray-900 text-gray-900 px-8 py-3 rounded-lg hover:bg-gray-900 hover:text-white transition font-medium flex items-center gap-2"
+                >
+                  Hire Me
+                  <ChevronRight className="w-5 h-5" />
+                </a>
+              </div>
+
+              {/* Stats */}
+              <div className="flex gap-6 pt-6">
+                <div>
+                  <div className="text-3xl font-bold text-gray-900">800+</div>
+                  <div className="text-gray-600 text-sm">Projects Done</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-gray-900">200+</div>
+                  <div className="text-gray-600 text-sm">Happy Clients</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-gray-900">5+</div>
+                  <div className="text-gray-600 text-sm">Years Experience</div>
+                </div>
               </div>
             </div>
-            <div className="absolute -bottom-2 -right-2 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full px-4 py-2 text-sm font-bold shadow-lg">
-              ⭐ Top Rated
+
+            {/* Right - Image */}
+            <div className="relative">
+              <div className="relative z-10">
+                <img 
+                  src=".\profile.jpg" 
+                  alt="Fahad"
+                  className="w-full max-w-md mx-auto rounded-3xl shadow-2xl"
+                />
+              </div>
+              {/* Green brush stroke behind image */}
+              <div className="absolute top-10 -right-10 w-80 h-96 bg-gradient-to-br from-emerald-400 to-emerald-500 rounded-full opacity-20 blur-3xl -z-10"></div>
+              <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-gradient-to-tr from-emerald-300 to-emerald-400 rounded-full opacity-20 blur-3xl -z-10"></div>
             </div>
-          </div>
-
-          <div className="mb-6">
-            <div className="inline-block bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full px-6 py-2 mb-6 border border-cyan-500/30">
-              <span className="text-cyan-400 font-semibold">🚀 YouTube Growth Specialist</span>
-            </div>
-          </div>
-
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-            Transform Your Channel Into
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 animate-gradient">
-              A Revenue Machine
-            </span>
-          </h1>
-          
-          <p className="text-xl md:text-2xl text-gray-500 max-w-3xl mx-auto mb-8 leading-relaxed">
-            Professional YouTube services with <span className="text-cyan-400 font-semibold">5+ years experience</span> and <span className="text-cyan-400 font-semibold">800+ successful projects</span>. From zero to monetization, I'll handle everything while you focus on creating content.
-          </p>
-
-          <div className="flex flex-wrap justify-center gap-4 mb-16">
-            <a 
-              href="https://www.upwork.com/freelancers/~01b4bda82598a073e9" 
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-gradient-to-r from-cyan-500 to-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:shadow-2xl hover:shadow-cyan-500/50 transition transform hover:scale-105 flex items-center space-x-2"
-            >
-              <span>Start Your Growth Journey</span>
-              <ChevronRight className="w-5 h-5" />
-            </a>
-            <button 
-              onClick={() => scrollToSection('portfolio')}
-              className="border-2 border-cyan-500/50 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-cyan-500/10 hover:border-cyan-400 transition flex items-center space-x-2 backdrop-blur-sm"
-            >
-              <span>View Success Stories</span>
-              <ArrowDown className="w-5 h-5 animate-bounce" />
-            </button>
           </div>
         </div>
       </section>
 
-      <section className="py-20 px-4 bg-gradient-to-b from-black via-zinc-950 to-black overflow-hidden relative">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
-        </div>
-
-        <div className="max-w-7xl mx-auto mb-12 relative z-10">
+      {/* Recent Work Section */}
+      <section className="py-20 px-4 bg-gray-50 overflow-hidden">
+        <div className="max-w-7xl mx-auto mb-12">
           <div className="text-center">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Recent Work</span>
-            </h2>
-            <p className="text-xl text-gray-500">Professional video editing and optimization</p>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">Recent Work</h2>
+            <p className="text-xl text-gray-600">Professional video editing and optimization</p>
           </div>
         </div>
 
-        <div className="relative z-10 group overflow-hidden">
+        <div className="relative group overflow-hidden">
           <div 
             className="flex gap-6 animate-scroll-reels" 
             style={{
@@ -526,7 +934,7 @@ export default function Portfolio() {
               <div 
                 key={idx}
                 onClick={() => handleVideoClick(reel)}
-                className="group/card relative overflow-hidden rounded-2xl border-2 border-cyan-500/20 hover:border-cyan-400 transition-all duration-500 hover:scale-105 cursor-pointer flex-shrink-0"
+                className="group/card relative overflow-hidden rounded-2xl border-2 border-emerald-200 hover:border-emerald-500 transition-all duration-500 hover:scale-105 cursor-pointer flex-shrink-0 shadow-lg"
                 style={{ width: '280px', height: '500px' }}
               >
                 <video
@@ -550,16 +958,15 @@ export default function Portfolio() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-60 group-hover/card:opacity-80 transition"></div>
                 
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/card:opacity-100 transition">
-                  <div className="w-16 h-16 rounded-full bg-cyan-500 flex items-center justify-center animate-pulse">
+                  <div className="w-16 h-16 rounded-full bg-emerald-500 flex items-center justify-center animate-pulse">
                     <Play className="w-8 h-8 text-white ml-1" fill="white" />
                   </div>
                 </div>
 
                 <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
                   <h3 className="text-white font-bold text-lg mb-1">{reel.title}</h3>
-                  <div className="flex items-center justify-between">
-                    <span className="text-cyan-400 font-semibold">{reel.views} views</span>
-                    <span className="bg-black/50 backdrop-blur-sm px-2 py-1 rounded text-sm">{reel.duration}</span>
+                  <div className="flex items-center justify-end">
+                    <span className="bg-black/50 backdrop-blur-sm px-2 py-1 rounded text-sm text-white">{reel.duration}</span>
                   </div>
                 </div>
               </div>
@@ -578,11 +985,11 @@ export default function Portfolio() {
             >
               <button
                 onClick={closeVideoPopup}
-                className="absolute -top-12 right-0 text-white hover:text-cyan-400 transition"
+                className="absolute -top-12 right-0 text-white hover:text-emerald-400 transition"
               >
                 <X className="w-8 h-8" />
               </button>
-              <div className="bg-zinc-950 rounded-2xl overflow-hidden border-2 border-cyan-400 shadow-2xl shadow-cyan-500/50">
+              <div className="bg-white rounded-2xl overflow-hidden border-2 border-emerald-400 shadow-2xl">
                 <video
                   src={selectedVideo.videoUrl}
                   className="w-full aspect-video"
@@ -590,9 +997,8 @@ export default function Portfolio() {
                   autoPlay
                 />
                 <div className="p-6">
-                  <h3 className="text-2xl font-bold text-white mb-2">{selectedVideo.title}</h3>
-                  <div className="flex items-center space-x-4 text-gray-400">
-                    <span className="text-cyan-400 font-semibold">{selectedVideo.views} views</span>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{selectedVideo.title}</h3>
+                  <div className="flex items-center space-x-4 text-gray-600">
                     <span>{selectedVideo.duration}</span>
                   </div>
                 </div>
@@ -601,75 +1007,69 @@ export default function Portfolio() {
           </div>
         )}
 
-        <div className="max-w-7xl mx-auto mt-20 relative z-10">
+        <div className="max-w-7xl mx-auto mt-20">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-zinc-950 rounded-xl p-6 border border-cyan-500/20 hover:border-cyan-400/50 transition text-center">
-              <div className="text-cyan-400 mb-2 flex justify-center"><CheckCircle className="w-6 h-6" /></div>
-              <div className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 mb-1">800+</div>
-              <div className="text-gray-500 text-sm">Projects Delivered</div>
+            <div className="bg-white rounded-xl p-6 border-2 border-emerald-200 hover:border-emerald-400 transition text-center shadow-lg">
+              <div className="text-emerald-500 mb-2 flex justify-center"><CheckCircle className="w-6 h-6" /></div>
+              <div className="text-4xl font-bold text-gray-900 mb-1">800+</div>
+              <div className="text-gray-600 text-sm">Projects Delivered</div>
             </div>
-            <div className="bg-zinc-950 rounded-xl p-6 border border-cyan-500/20 hover:border-cyan-400/50 transition text-center">
-              <div className="text-cyan-400 mb-2 flex justify-center"><TrendingUp className="w-6 h-6" /></div>
-              <div className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 mb-1">200+</div>
-              <div className="text-gray-500 text-sm">Channels Grown</div>
+            <div className="bg-white rounded-xl p-6 border-2 border-emerald-200 hover:border-emerald-400 transition text-center shadow-lg">
+              <div className="text-emerald-500 mb-2 flex justify-center"><TrendingUp className="w-6 h-6" /></div>
+              <div className="text-4xl font-bold text-gray-900 mb-1">200+</div>
+              <div className="text-gray-600 text-sm">Channels Grown</div>
             </div>
-            <div className="bg-zinc-950 rounded-xl p-6 border border-cyan-500/20 hover:border-cyan-400/50 transition text-center">
-              <div className="text-cyan-400 mb-2 flex justify-center"><Clock className="w-6 h-6" /></div>
-              <div className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 mb-1">5+</div>
-              <div className="text-gray-500 text-sm">Years Experience</div>
+            <div className="bg-white rounded-xl p-6 border-2 border-emerald-200 hover:border-emerald-400 transition text-center shadow-lg">
+              <div className="text-emerald-500 mb-2 flex justify-center"><Clock className="w-6 h-6" /></div>
+              <div className="text-4xl font-bold text-gray-900 mb-1">5+</div>
+              <div className="text-gray-600 text-sm">Years Experience</div>
             </div>
-            <div className="bg-zinc-950 rounded-xl p-6 border border-cyan-500/20 hover:border-cyan-400/50 transition text-center">
-              <div className="text-cyan-400 mb-2 flex justify-center"><Star className="w-6 h-6" /></div>
-              <div className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 mb-1">100%</div>
-              <div className="text-gray-500 text-sm">Client Satisfaction</div>
+            <div className="bg-white rounded-xl p-6 border-2 border-emerald-200 hover:border-emerald-400 transition text-center shadow-lg">
+              <div className="text-emerald-500 mb-2 flex justify-center"><Star className="w-6 h-6" /></div>
+              <div className="text-4xl font-bold text-gray-900 mb-1">100%</div>
+              <div className="text-gray-600 text-sm">Client Satisfaction</div>
             </div>
           </div>
         </div>
       </section>
 
-      <section id="services" className="py-20 px-4 bg-gradient-to-b from-zinc-950 via-black to-zinc-950 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
-          <div className="absolute bottom-1/3 left-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000"></div>
-        </div>
-        
-        <div className="max-w-7xl mx-auto relative z-10">
+      {/* Services Section */}
+      <section id="services" className="py-20 px-4 bg-white">
+        <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Complete YouTube Solutions</span>
-            </h2>
-            <p className="text-xl text-gray-500">Everything you need to dominate YouTube in 2025</p>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">Complete YouTube Solutions</h2>
+            <p className="text-xl text-gray-600">Everything you need to dominate YouTube in 2025</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 mb-8">
             {services.slice(0, 3).map((service, idx) => (
               <div 
                 key={idx}
-                className="bg-black rounded-2xl p-6 border border-cyan-500/20 hover:border-cyan-400 transition-all duration-300 group cursor-pointer hover:transform hover:scale-105 hover:shadow-xl hover:shadow-cyan-500/20"
+                className="bg-white rounded-2xl p-6 border-2 border-gray-200 hover:border-emerald-400 transition-all duration-300 group cursor-pointer hover:transform hover:scale-105 hover:shadow-xl"
               >
-                <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center text-white mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all shadow-lg shadow-cyan-500/50">
+                <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl flex items-center justify-center text-white mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all shadow-lg">
                   {service.icon}
                 </div>
                 
-                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-cyan-400 transition">{service.title}</h3>
-                <p className="text-gray-500 mb-4">{service.description}</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-emerald-500 transition">{service.title}</h3>
+                <p className="text-gray-600 mb-4">{service.description}</p>
                 
                 <div className="space-y-2 mb-6">
                   {service.features.map((feature, i) => (
                     <div key={i} className="flex items-center space-x-2">
-                      <CheckCircle className="w-4 h-4 text-cyan-400 flex-shrink-0" />
-                      <span className="text-gray-400 text-sm">{feature}</span>
+                      <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                      <span className="text-gray-600 text-sm">{feature}</span>
                     </div>
                   ))}
                 </div>
 
-                <div className="flex items-center justify-between pt-4 border-t border-cyan-500/20">
-                  <span className="text-cyan-400 font-bold text-xl">{service.price}</span>
+                <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                  <span className="text-emerald-500 font-bold text-xl">{service.price}</span>
                   <a 
                     href="https://www.upwork.com/freelancers/~01b4bda82598a073e9" 
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-2 rounded-lg text-sm font-semibold hover:shadow-lg hover:shadow-cyan-500/50 transition flex items-center space-x-1"
+                    className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:shadow-lg transition flex items-center space-x-1"
                   >
                     <span>Order Now</span>
                     <ChevronRight className="w-4 h-4" />
@@ -695,32 +1095,32 @@ export default function Portfolio() {
               {[...services.slice(3), ...services.slice(3)].map((service, idx) => (
                 <div 
                   key={idx}
-                  className="bg-black rounded-2xl p-6 border border-cyan-500/20 hover:border-cyan-400 transition-all duration-300 group/card cursor-pointer hover:transform hover:scale-105 hover:shadow-xl hover:shadow-cyan-500/20 flex-shrink-0"
+                  className="bg-white rounded-2xl p-6 border-2 border-gray-200 hover:border-emerald-400 transition-all duration-300 group/card cursor-pointer hover:transform hover:scale-105 hover:shadow-xl flex-shrink-0"
                   style={{ width: '350px' }}
                 >
-                  <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center text-white mb-4 group-hover/card:scale-110 group-hover/card:rotate-3 transition-all shadow-lg shadow-cyan-500/50">
+                  <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl flex items-center justify-center text-white mb-4 group-hover/card:scale-110 group-hover/card:rotate-3 transition-all shadow-lg">
                     {service.icon}
                   </div>
                   
-                  <h3 className="text-xl font-bold text-white mb-2 group-hover/card:text-cyan-400 transition">{service.title}</h3>
-                  <p className="text-gray-500 mb-4">{service.description}</p>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover/card:text-emerald-500 transition">{service.title}</h3>
+                  <p className="text-gray-600 mb-4">{service.description}</p>
                   
                   <div className="space-y-2 mb-6">
                     {service.features.map((feature, i) => (
                       <div key={i} className="flex items-center space-x-2">
-                        <CheckCircle className="w-4 h-4 text-cyan-400 flex-shrink-0" />
-                        <span className="text-gray-400 text-sm">{feature}</span>
+                        <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                        <span className="text-gray-600 text-sm">{feature}</span>
                       </div>
                     ))}
                   </div>
 
-                  <div className="flex items-center justify-between pt-4 border-t border-cyan-500/20">
-                    <span className="text-cyan-400 font-bold text-xl">{service.price}</span>
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                    <span className="text-emerald-500 font-bold text-xl">{service.price}</span>
                     <a 
                       href="https://www.upwork.com/freelancers/~01b4bda82598a073e9" 
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-2 rounded-lg text-sm font-semibold hover:shadow-lg hover:shadow-cyan-500/50 transition flex items-center space-x-1"
+                      className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:shadow-lg transition flex items-center space-x-1"
                     >
                       <span>Order Now</span>
                       <ChevronRight className="w-4 h-4" />
@@ -733,31 +1133,25 @@ export default function Portfolio() {
         </div>
       </section>
 
-      <section id="portfolio" className="py-20 px-4 bg-gradient-to-b from-black via-zinc-950 to-black relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-1/4 right-1/3 w-96 h-96 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
-          <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000"></div>
-        </div>
-        
-        <div className="max-w-7xl mx-auto relative z-10">
+      {/* Portfolio Section */}
+      <section id="portfolio" className="py-20 px-4 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Success Stories</span>
-            </h2>
-            <p className="text-xl text-gray-500">Real results from real clients - proven track record</p>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">Success Stories</h2>
+            <p className="text-xl text-gray-600">Real results from real clients - proven track record</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-6 mb-12">
             {portfolio.map((project, idx) => (
               <div 
                 key={idx}
                 onClick={() => handlePortfolioClick(project)}
-                className="group relative overflow-hidden rounded-2xl cursor-pointer border-2 border-cyan-500/20 hover:border-cyan-400 transition-all duration-500"
+                className="group relative overflow-hidden rounded-2xl cursor-pointer border-2 border-gray-200 hover:border-emerald-400 transition-all duration-500 shadow-lg"
               >
                 <div className="aspect-video overflow-hidden relative">
                   <video
                     ref={el => {
-                      if (el) videoRefs.current[`portfolio-${idx}`] = el;
+                      if (el) videoRefs.current[`portfolio-home-${idx}`] = el;
                     }}
                     src={project.videoUrl}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
@@ -770,21 +1164,32 @@ export default function Portfolio() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300 flex items-end p-6">
                   <div>
                     <h3 className="text-white text-2xl font-bold mb-2">{project.title}</h3>
-                    <p className="text-cyan-300 font-semibold text-lg mb-1">{project.result}</p>
-                    <p className="text-gray-400 text-sm">{project.description}</p>
+                    <p className="text-emerald-300 font-semibold text-lg mb-1">{project.result}</p>
+                    <p className="text-gray-300 text-sm">{project.description}</p>
                   </div>
                 </div>
-                <div className="absolute top-4 right-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg z-10">
+                <div className="absolute top-4 right-4 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg z-10">
                   {project.result}
                 </div>
                 
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition z-20">
-                  <div className="w-16 h-16 rounded-full bg-cyan-500 flex items-center justify-center animate-pulse">
+                  <div className="w-16 h-16 rounded-full bg-emerald-500 flex items-center justify-center animate-pulse">
                     <Play className="w-8 h-8 text-white ml-1" fill="white" />
                   </div>
                 </div>
               </div>
             ))}
+          </div>
+
+          <div className="text-center">
+            <button
+              onClick={openPortfolioPage}
+              className="inline-flex items-center space-x-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:shadow-2xl transition transform hover:scale-105"
+            >
+              <Award className="w-6 h-6" />
+              <span>View All Portfolio</span>
+              <ChevronRight className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </section>
@@ -800,11 +1205,11 @@ export default function Portfolio() {
           >
             <button
               onClick={closePortfolioPopup}
-              className="absolute -top-12 right-0 text-white hover:text-cyan-400 transition"
+              className="absolute -top-12 right-0 text-white hover:text-emerald-400 transition"
             >
               <X className="w-8 h-8" />
             </button>
-            <div className="bg-zinc-950 rounded-2xl overflow-hidden border-2 border-cyan-400 shadow-2xl shadow-cyan-500/50">
+            <div className="bg-white rounded-2xl overflow-hidden border-2 border-emerald-400 shadow-2xl">
               <video
                 src={selectedPortfolio.videoUrl}
                 className="w-full aspect-video"
@@ -812,33 +1217,28 @@ export default function Portfolio() {
                 autoPlay
               />
               <div className="p-6">
-                <h3 className="text-2xl font-bold text-white mb-2">{selectedPortfolio.title}</h3>
-                <p className="text-cyan-400 font-semibold text-lg mb-2">{selectedPortfolio.result}</p>
-                <p className="text-gray-400">{selectedPortfolio.description}</p>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">{selectedPortfolio.title}</h3>
+                <p className="text-emerald-500 font-semibold text-lg mb-2">{selectedPortfolio.result}</p>
+                <p className="text-gray-600">{selectedPortfolio.description}</p>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      <section id="testimonials" className="py-20 px-4 bg-gradient-to-b from-zinc-950 via-black to-zinc-950 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
-        </div>
-        
-        <div className="max-w-7xl mx-auto relative z-10">
+      {/* Testimonials Section */}
+      <section id="testimonials" className="py-20 px-4 bg-white">
+        <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Client Reviews</span>
-            </h2>
-            <p className="text-xl text-gray-500">Don't just take my word for it - hear from satisfied clients</p>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">Client Reviews</h2>
+            <p className="text-xl text-gray-600">Don't just take my word for it - hear from satisfied clients</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, idx) => (
               <div 
                 key={idx}
-                className="bg-black rounded-2xl p-8 border border-cyan-500/20 hover:border-cyan-400 transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-cyan-500/20"
+                className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-emerald-400 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
               >
                 <div className="flex items-center space-x-1 mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
@@ -846,15 +1246,15 @@ export default function Portfolio() {
                   ))}
                 </div>
                 
-                <p className="text-gray-400 mb-6 italic leading-relaxed">"{testimonial.content}"</p>
+                <p className="text-gray-600 mb-6 italic leading-relaxed">"{testimonial.content}"</p>
                 
                 <div className="flex items-center space-x-3">
-                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
                     {testimonial.avatar}
                   </div>
                   <div>
-                    <p className="text-white font-semibold text-lg">{testimonial.name}</p>
-                    <p className="text-cyan-400 text-sm">{testimonial.role}</p>
+                    <p className="text-gray-900 font-semibold text-lg">{testimonial.name}</p>
+                    <p className="text-emerald-500 text-sm">{testimonial.role}</p>
                   </div>
                 </div>
               </div>
@@ -863,96 +1263,85 @@ export default function Portfolio() {
         </div>
       </section>
 
-      <section className="py-20 px-4 bg-gradient-to-b from-black via-zinc-950 to-black relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
-          <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000"></div>
-        </div>
-        
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <div className="bg-zinc-950 rounded-3xl p-12 border-2 border-cyan-400/50 backdrop-blur-sm relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-blue-500/5"></div>
-            <div className="relative z-10">
-              <div className="inline-block bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full px-6 py-2 mb-6 text-sm font-bold">
-                🎯 Limited Slots Available
-              </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
-                Ready to <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">10X</span> Your Channel?
-              </h2>
-              <p className="text-xl text-gray-400 mb-8 leading-relaxed">
-                Join 200+ successful creators who transformed their channels into profitable businesses. Let's create your YouTube success story together!
-              </p>
-              <div className="flex flex-wrap justify-center gap-4">
-                <a 
-                  href="https://www.upwork.com/freelancers/~01b4bda82598a073e9" 
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center space-x-2 bg-gradient-to-r from-cyan-500 to-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:shadow-2xl hover:shadow-cyan-500/50 transition transform hover:scale-105"
-                >
-                  <span>Start Growing Today</span>
-                  <ChevronRight className="w-5 h-5" />
-                </a>
-                <a 
-                  href="https://www.upwork.com/freelancers/~01b4bda82598a073e9" 
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center space-x-2 border-2 border-cyan-400 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-cyan-500/10 transition"
-                >
-                  <span>Schedule Consultation</span>
-                </a>
-              </div>
+      {/* CTA Section */}
+      <section className="py-20 px-4 bg-gray-50">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="bg-white rounded-3xl p-12 border-2 border-emerald-400 shadow-2xl">
+            <div className="inline-block bg-emerald-500 text-white rounded-full px-6 py-2 mb-6 text-sm font-bold">
+              🎯 Limited Slots Available
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+              Ready to <span className="text-emerald-500">10X</span> Your Channel?
+            </h2>
+            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+              Join 200+ successful creators who transformed their channels into profitable businesses. Let's create your YouTube success story together!
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <a 
+                href="https://www.upwork.com/freelancers/~01b4bda82598a073e9" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center space-x-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:shadow-2xl transition transform hover:scale-105"
+              >
+                <span>Start Growing Today</span>
+                <ChevronRight className="w-5 h-5" />
+              </a>
+              <a 
+                href="https://www.upwork.com/freelancers/~01b4bda82598a073e9" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center space-x-2 border-2 border-emerald-500 text-emerald-500 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-emerald-50 transition"
+              >
+                <span>Schedule Consultation</span>
+              </a>
             </div>
           </div>
         </div>
       </section>
 
-      <footer className="py-12 px-4 bg-black border-t border-cyan-500/10">
+      {/* Footer */}
+      <footer className="py-12 px-4 bg-white border-t border-gray-200">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-3 gap-8 mb-8">
             <div>
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-cyan-500/50">
-                  <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M13.5 2C13.5 2 15 3.5 15 6C15 8.5 13.5 10 13.5 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                    <path d="M21 6L3 2L5 12L3 22L21 18V6Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
-                    <circle cx="8" cy="12" r="1.5" fill="currentColor"/>
-                    <path d="M9 12H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                  </svg>
-                </div>
-                <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Fahad</span>
+              <div className="flex items-center space-x-2 mb-4">
+                <span className="text-3xl font-bold text-gray-900">FAHAD<span className="text-gray-400">.</span></span>
               </div>
-              <p className="text-gray-500 leading-relaxed">
+              <p className="text-gray-600 leading-relaxed">
                 Professional YouTube Growth Specialist helping creators build successful channels since 2019.
               </p>
             </div>
             
             <div>
-              <h3 className="text-white font-bold mb-4">Quick Links</h3>
+              <h3 className="text-gray-900 font-bold mb-4">Quick Links</h3>
               <div className="space-y-2">
-                <button onClick={() => scrollToSection('services')} className="block text-gray-500 hover:text-cyan-400 transition">Services</button>
-                <button onClick={() => scrollToSection('portfolio')} className="block text-gray-500 hover:text-cyan-400 transition">Portfolio</button>
-                <button onClick={() => scrollToSection('testimonials')} className="block text-gray-500 hover:text-cyan-400 transition">Reviews</button>
+                <button onClick={() => scrollToSection('services')} className="block text-gray-600 hover:text-emerald-500 transition">Services</button>
+                <button onClick={openPortfolioPage} className="block text-gray-600 hover:text-emerald-500 transition">Portfolio</button>
+                <button onClick={() => scrollToSection('testimonials')} className="block text-gray-600 hover:text-emerald-500 transition">Reviews</button>
               </div>
             </div>
 
             <div>
-              <h3 className="text-white font-bold mb-4">Connect</h3>
+              <h3 className="text-gray-900 font-bold mb-4">Connect</h3>
               <div className="flex space-x-3">
-                <a href="#" className="w-10 h-10 rounded-full bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center hover:bg-cyan-400 hover:text-black transition">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                <a href="#" className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center hover:bg-emerald-500 hover:border-emerald-500 hover:text-white transition">
+                  <Facebook className="w-5 h-5" />
                 </a>
-                <a href="#" className="w-10 h-10 rounded-full bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center hover:bg-cyan-400 hover:text-black transition">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/></svg>
+                <a href="#" className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center hover:bg-emerald-500 hover:border-emerald-500 hover:text-white transition">
+                  <Instagram className="w-5 h-5" />
                 </a>
-                <a href="#" className="w-10 h-10 rounded-full bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center hover:bg-cyan-400 hover:text-black transition">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                <a href="#" className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center hover:bg-emerald-500 hover:border-emerald-500 hover:text-white transition">
+                  <Linkedin className="w-5 h-5" />
+                </a>
+                <a href="#" className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center hover:bg-emerald-500 hover:border-emerald-500 hover:text-white transition">
+                  <Youtube className="w-5 h-5" />
                 </a>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-cyan-500/10 pt-8 text-center">
-            <p className="text-gray-600">
+          <div className="border-t border-gray-200 pt-8 text-center">
+            <p className="text-gray-500">
               © 2025 Fahad - YouTube Growth Specialist. All rights reserved.
             </p>
           </div>
