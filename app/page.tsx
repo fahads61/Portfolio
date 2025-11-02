@@ -744,23 +744,11 @@ export default function Portfolio() {
   return (
     <div className="min-h-screen bg-white text-gray-900 overflow-x-hidden">
       <style>{`
-        @keyframes scroll-services {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
-
-        .scroll-services-container {
-          animation: scroll-services 30s linear infinite;
-        }
-
         .hero-circle {
           position: absolute;
           border-radius: 50%;
           background: #4ade80;
+          will-change: transform;
         }
 
         .hero-brush {
@@ -770,6 +758,7 @@ export default function Portfolio() {
           background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
           filter: blur(40px);
           opacity: 0.6;
+          will-change: opacity;
         }
       `}</style>
 
@@ -970,11 +959,14 @@ export default function Portfolio() {
                   className="group relative overflow-hidden rounded-2xl border-2 border-gray-200 hover:border-emerald-500 transition-all duration-500 cursor-pointer shadow-xl hover:shadow-2xl transform hover:scale-[1.02]"
                 >
                   <div className="aspect-video relative bg-gray-900">
-                    <img
+                    <Image
                       src={getGDriveThumbnail(reel.videoId)}
                       alt={reel.title}
+                      width={800}
+                      height={450}
+                      loading="lazy"
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                      onError={(e) => {
+                      onError={(e: any) => {
                         e.currentTarget.src = 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&h=450&fit=crop';
                       }}
                     />
@@ -1018,13 +1010,13 @@ export default function Portfolio() {
                   className="group relative overflow-hidden rounded-2xl border-2 border-gray-200 hover:border-purple-500 transition-all duration-500 cursor-pointer shadow-xl hover:shadow-2xl transform hover:scale-[1.02]"
                 >
                   <div className="aspect-video relative bg-gray-900">
-                    <img
+                    <Image
                       src={thumbnail}
                       alt={`Thumbnail ${idx + 1}`}
+                      width={800}
+                      height={450}
+                      loading="lazy"
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                      onError={(e) => {
-                        e.currentTarget.src = 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&h=450&fit=crop';
-                      }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-purple-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500">
                       <div className="absolute bottom-6 left-6 right-6">
@@ -1122,13 +1114,13 @@ export default function Portfolio() {
                 <div className="aspect-video overflow-hidden relative bg-gray-900">
                   {project.videoId ? (
                     <div className="relative w-full h-full">
-                      <img
+                      <Image
                         src={getGDriveThumbnail(project.videoId)}
                         alt={project.title}
+                        width={500}
+                        height={350}
+                        loading="lazy"
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                        onError={(e) => {
-                          e.currentTarget.src = 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=500&h=350&fit=crop';
-                        }}
                       />
                       <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/60 transition-all duration-500">
                         <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center group-hover:scale-125 transition-all duration-500 shadow-2xl">
@@ -1137,9 +1129,12 @@ export default function Portfolio() {
                       </div>
                     </div>
                   ) : (
-                    <img
+                    <Image
                       src={project.image}
                       alt={project.title}
+                      width={500}
+                      height={350}
+                      loading="lazy"
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
                   )}
