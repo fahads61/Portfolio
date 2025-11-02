@@ -893,12 +893,12 @@ export default function Portfolio() {
             <div className="relative">
               <div className="relative z-10">
                 <Image
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=600&fit=crop"
+                  src="/profile.jpg"
                   alt="Fahad"
                   width={500}
                   height={600}
                   priority
-                  className="w-full max-w-md mx-auto rounded-3xl shadow-2xl"
+                  className="w-full max-w-md mx-auto rounded-3xl shadow-2xl object-cover"
                 />
               </div>
               {/* Green brush stroke behind image */}
