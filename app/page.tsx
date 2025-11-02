@@ -1,14 +1,65 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Award, TrendingUp, Video, Youtube, Search, Zap, ChevronRight, ChevronLeft, Menu, X, Star, CheckCircle, ArrowDown, BarChart3, DollarSign, Users, Target, Settings, Shield, Lightbulb, Clock, Facebook, Instagram, Linkedin, Download, ArrowLeft, Palette, Film, Sparkles, Layout, TrendingUp as Growth, PenTool } from 'lucide-react';
+import Image from 'next/image';
+import { Play, Award, TrendingUp, Video, Search, Zap, ChevronRight, Menu, X, Star, CheckCircle, BarChart3, DollarSign, Users, Target, Settings, Shield, Lightbulb, Clock, ArrowLeft, Palette, Film, Sparkles } from 'lucide-react';
+
+// ============================================
+// GOOGLE DRIVE VIDEO CONFIGURATION
+// Yahan apni Google Drive video IDs add karein
+// ============================================
+const GOOGLE_DRIVE_VIDEOS = {
+  // Video Editing Category
+  'gaming-montage': '1wSgNJXuHYdslD2ceqZfok5Bq5rrdPCDI',
+  'cinematic-travel': '1n_ML6T6B7ng3kUjHOTWazKmASInzcey9',
+  'tech-review': '1fKpa29ouQXKKAtzJufAGzoJXqWxhwjbB',
+  'fitness-transformation': '1hyhNq7WxLfIgNwSp_uTcn3tZTMMAZGFk',
+
+  // Thumbnail Design Category
+  'gaming-thumbnails': '1iS2B5DiFuOIbpYniVtg-gplzFdMOagj-',
+  'tech-thumbnails': '1mZuylZPAQgOHCdWIps0z-K_87dqfVcNU',
+  'vlog-thumbnails': '1_QkmgiLfA8UxDgLdKsmu7WQ1ckS7z1eZ',
+  'business-thumbnails': '1_yb1oPepUFpDKOwY5_-Hf_Nr-Z2KhTYA',
+
+  // Graphic Design Category
+  'channel-banner': '1h5AG2hXGshhfhsfZEsYf_YWCcqBc15lT',
+  'social-media-graphics': '18Q5r2g4fiCQn90b1JrTZQAI7iWP0iRjT',
+  'brand-identity': '1-PGTGBv5LNmga-U7vKWmWd2uJ8p8uB6f',
+  'motion-graphics': '1wSgNJXuHYdslD2ceqZfok5Bq5rrdPCDI',
+
+  // Logo Design Category
+  'gaming-logo': '1n_ML6T6B7ng3kUjHOTWazKmASInzcey9',
+  'tech-logo': '1fKpa29ouQXKKAtzJufAGzoJXqWxhwjbB',
+  'business-logo': '1hyhNq7WxLfIgNwSp_uTcn3tZTMMAZGFk',
+  'lifestyle-logo': '1iS2B5DiFuOIbpYniVtg-gplzFdMOagj-',
+
+  // Channel Branding Category
+  'complete-setup': '1mZuylZPAQgOHCdWIps0z-K_87dqfVcNU',
+  'gaming-rebrand': '1_QkmgiLfA8UxDgLdKsmu7WQ1ckS7z1eZ',
+  'tech-launch': '1_yb1oPepUFpDKOwY5_-Hf_Nr-Z2KhTYA',
+  'business-brand': '1h5AG2hXGshhfhsfZEsYf_YWCcqBc15lT',
+
+  // SEO Optimization Category
+  'seo-gaming': '18Q5r2g4fiCQn90b1JrTZQAI7iWP0iRjT',
+  'seo-tech': '1-PGTGBv5LNmga-U7vKWmWd2uJ8p8uB6f',
+  'seo-audit': '1wSgNJXuHYdslD2ceqZfok5Bq5rrdPCDI',
+  'viral-seo': '1n_ML6T6B7ng3kUjHOTWazKmASInzcey9'
+};
+
+// Helper function to generate Google Drive embed URL
+const getGDriveEmbedUrl = (videoId: string) => {
+  return `https://drive.google.com/file/d/${videoId}/preview`;
+};
+
+// Helper function to generate Google Drive thumbnail URL
+const getGDriveThumbnail = (videoId: string) => {
+  return `https://drive.google.com/thumbnail?id=${videoId}&sz=w1000`;
+};
 
 interface ReelType {
   title: string;
-  views: string;
   thumbnail: string;
-  duration: string;
-  videoUrl: string;
+  videoId: string;
 }
 
 interface ServiceType {
@@ -24,7 +75,7 @@ interface PortfolioType {
   result: string;
   image: string;
   description: string;
-  videoUrl: string;
+  videoId: string;
   category: string;
 }
 
@@ -38,72 +89,68 @@ interface TestimonialType {
 
 export default function Portfolio() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [currentReelPage, setCurrentReelPage] = useState(0);
-  const [autoScrollPosition, setAutoScrollPosition] = useState(0);
   const [selectedVideo, setSelectedVideo] = useState<ReelType | null>(null);
   const [selectedPortfolio, setSelectedPortfolio] = useState<PortfolioType | null>(null);
-  const [isVideoPlaying, setIsVideoPlaying] = useState<Record<string, boolean>>({});
   const [showPortfolioPage, setShowPortfolioPage] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const scrollRef = useRef<HTMLDivElement | null>(null);
-  const videoRefs = useRef<Record<string, HTMLVideoElement>>({});
+  const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('up');
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const [isScrolled, setIsScrolled] = useState(false);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setScrollDirection('down');
+      } else {
+        setScrollDirection('up');
+      }
+
+      setIsScrolled(currentScrollY > 50);
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
+
+  // Updated Reels with Google Drive videos
   const reels: ReelType[] = [
-    { 
-      title: "Gaming Montage - 4K Edit", 
-      views: "2.5M",
-      thumbnail: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=600&fit=crop",
-      duration: "0:45",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+    {
+      title: "Video Sample 1",
+      thumbnail: "",
+      videoId: '1iS2B5DiFuOIbpYniVtg-gplzFdMOagj-'
     },
-    { 
-      title: "Tech Review - Pro Setup", 
-      views: "1.8M",
-      thumbnail: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400&h=600&fit=crop",
-      duration: "1:20",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+    {
+      title: "Video Sample 2",
+      thumbnail: "",
+      videoId: '1mZuylZPAQgOHCdWIps0z-K_87dqfVcNU'
     },
-    { 
-      title: "Fitness Transformation Journey", 
-      views: "3.2M",
-      thumbnail: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=600&fit=crop",
-      duration: "0:58",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+    {
+      title: "Video Sample 3",
+      thumbnail: "",
+      videoId: '1_QkmgiLfA8UxDgLdKsmu7WQ1ckS7z1eZ'
     },
-    { 
-      title: "Travel Cinematic Vlog", 
-      views: "1.5M",
-      thumbnail: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&h=600&fit=crop",
-      duration: "1:15",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
+    {
+      title: "Video Sample 4",
+      thumbnail: "",
+      videoId: '1_yb1oPepUFpDKOwY5_-Hf_Nr-Z2KhTYA'
     },
-    { 
-      title: "Cooking Tutorial - Quick Recipe", 
-      views: "2.1M",
-      thumbnail: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=400&h=600&fit=crop",
-      duration: "0:35",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4"
+    {
+      title: "Video Sample 5",
+      thumbnail: "",
+      videoId: '1h5AG2hXGshhfhsfZEsYf_YWCcqBc15lT'
     },
-    { 
-      title: "Business Growth Strategy", 
-      views: "980K",
-      thumbnail: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=400&h=600&fit=crop",
-      duration: "1:05",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4"
+    {
+      title: "Video Sample 6",
+      thumbnail: "",
+      videoId: '18Q5r2g4fiCQn90b1JrTZQAI7iWP0iRjT'
     },
-    { 
-      title: "Lifestyle Content Creator", 
-      views: "1.2M",
-      thumbnail: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=400&h=600&fit=crop",
-      duration: "0:52",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4"
-    },
-    { 
-      title: "Educational Tutorial Series", 
-      views: "890K",
-      thumbnail: "https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=400&h=600&fit=crop",
-      duration: "1:30",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4"
+    {
+      title: "Video Sample 7",
+      thumbnail: "",
+      videoId: '1-PGTGBv5LNmga-U7vKWmWd2uJ8p8uB6f'
     }
   ];
 
@@ -173,209 +220,228 @@ export default function Portfolio() {
     }
   ];
 
+  // Updated Portfolio with Google Drive videos and local thumbnails
   const allPortfolio: PortfolioType[] = [
     // Video Editing
-    { 
-      title: "Gaming Montage Pro Edit", 
-      result: "2.5M+ Views", 
-      image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500&h=350&fit=crop",
-      description: "Professional gaming montage with color grading",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    {
+      title: "Video Sample 1",
+      result: "",
+      image: "",
+      description: "",
+      videoId: GOOGLE_DRIVE_VIDEOS['gaming-montage'],
       category: "video-editing"
     },
-    { 
-      title: "Cinematic Travel Vlog", 
-      result: "1.8M+ Views", 
-      image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=500&h=350&fit=crop",
-      description: "Cinematic storytelling with transitions",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    {
+      title: "Video Sample 2",
+      result: "",
+      image: "",
+      description: "",
+      videoId: GOOGLE_DRIVE_VIDEOS['cinematic-travel'],
       category: "video-editing"
     },
-    { 
-      title: "Tech Review Edit", 
-      result: "1.5M+ Views", 
-      image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500&h=350&fit=crop",
-      description: "Clean tech review with motion graphics",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    {
+      title: "Video Sample 3",
+      result: "",
+      image: "",
+      description: "",
+      videoId: GOOGLE_DRIVE_VIDEOS['tech-review'],
       category: "video-editing"
     },
-    { 
-      title: "Fitness Transformation", 
-      result: "3.2M+ Views", 
-      image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500&h=350&fit=crop",
-      description: "Motivational fitness video editing",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    {
+      title: "Video Sample 4",
+      result: "",
+      image: "",
+      description: "",
+      videoId: GOOGLE_DRIVE_VIDEOS['fitness-transformation'],
       category: "video-editing"
     },
-    
+    {
+      title: "Video Sample 5",
+      result: "",
+      image: "",
+      description: "",
+      videoId: GOOGLE_DRIVE_VIDEOS['gaming-thumbnails'],
+      category: "video-editing"
+    },
+    {
+      title: "Video Sample 6",
+      result: "",
+      image: "",
+      description: "",
+      videoId: GOOGLE_DRIVE_VIDEOS['tech-thumbnails'],
+      category: "video-editing"
+    },
+    {
+      title: "Video Sample 7",
+      result: "",
+      image: "",
+      description: "",
+      videoId: GOOGLE_DRIVE_VIDEOS['vlog-thumbnails'],
+      category: "video-editing"
+    },
+
     // Thumbnail Design
-    { 
-      title: "Gaming Thumbnail Pack", 
-      result: "15% CTR", 
-      image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500&h=350&fit=crop",
-      description: "Eye-catching gaming thumbnails",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    {
+      title: "Thumbnail 1",
+      result: "",
+      image: "/thumbnails/PREVIOUS_WORKs_page-0001.jpg",
+      description: "",
+      videoId: "",
       category: "thumbnail"
     },
-    { 
-      title: "Tech Review Thumbnails", 
-      result: "18% CTR", 
-      image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500&h=350&fit=crop",
-      description: "Professional tech thumbnails",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+    {
+      title: "Thumbnail 2",
+      result: "",
+      image: "/thumbnails/PREVIOUS_WORKs_page-0002.jpg",
+      description: "",
+      videoId: "",
       category: "thumbnail"
     },
-    { 
-      title: "Vlog Thumbnail Series", 
-      result: "12% CTR", 
-      image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=500&h=350&fit=crop",
-      description: "Lifestyle vlog thumbnails",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+    {
+      title: "Thumbnail 3",
+      result: "",
+      image: "/thumbnails/PREVIOUS_WORKs_page-0003.jpg",
+      description: "",
+      videoId: "",
       category: "thumbnail"
     },
-    { 
-      title: "Business Thumbnails", 
-      result: "20% CTR", 
-      image: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=500&h=350&fit=crop",
-      description: "Professional business thumbnails",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+    {
+      title: "Thumbnail 4",
+      result: "",
+      image: "/thumbnails/PREVIOUS_WORKs_page-0004.jpg",
+      description: "",
+      videoId: "",
       category: "thumbnail"
     },
-    
-    // Graphic Design
-    { 
-      title: "Channel Banner Design", 
-      result: "Modern & Clean", 
-      image: "https://images.unsplash.com/photo-1626785774573-4b799315345d?w=500&h=350&fit=crop",
-      description: "Professional channel art",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-      category: "graphic-design"
+    {
+      title: "Thumbnail 5",
+      result: "",
+      image: "/thumbnails/PREVIOUS_WORKs_page-0005.jpg",
+      description: "",
+      videoId: "",
+      category: "thumbnail"
     },
-    { 
-      title: "Social Media Graphics", 
-      result: "Complete Pack", 
-      image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=500&h=350&fit=crop",
-      description: "Instagram, Twitter, Facebook graphics",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-      category: "graphic-design"
+    {
+      title: "Thumbnail 6",
+      result: "",
+      image: "/thumbnails/PREVIOUS_WORKs_page-0006.jpg",
+      description: "",
+      videoId: "",
+      category: "thumbnail"
     },
-    { 
-      title: "Brand Identity Pack", 
-      result: "Full Branding", 
-      image: "https://images.unsplash.com/photo-1558655146-d09347e92766?w=500&h=350&fit=crop",
-      description: "Logo, colors, typography",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-      category: "graphic-design"
+    {
+      title: "Thumbnail 7",
+      result: "",
+      image: "/thumbnails/PREVIOUS_WORKs_page-0007.jpg",
+      description: "",
+      videoId: "",
+      category: "thumbnail"
     },
-    { 
-      title: "Motion Graphics Pack", 
-      result: "Animated Assets", 
-      image: "https://images.unsplash.com/photo-1572044162444-ad60f128bdea?w=500&h=350&fit=crop",
-      description: "Intros, outros, lower thirds",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-      category: "graphic-design"
+    {
+      title: "Thumbnail 8",
+      result: "",
+      image: "/thumbnails/PREVIOUS_WORKs_page-0008.jpg",
+      description: "",
+      videoId: "",
+      category: "thumbnail"
     },
-    
+    {
+      title: "Thumbnail 9",
+      result: "",
+      image: "/thumbnails/PREVIOUS_WORKs_page-0009.jpg",
+      description: "",
+      videoId: "",
+      category: "thumbnail"
+    },
+    {
+      title: "Thumbnail 10",
+      result: "",
+      image: "/thumbnails/PREVIOUS_WORKs_page-0010.jpg",
+      description: "",
+      videoId: "",
+      category: "thumbnail"
+    },
+
     // Logo Design
-    { 
-      title: "Gaming Logo Design", 
-      result: "Esports Ready", 
-      image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500&h=350&fit=crop",
-      description: "Modern gaming logo",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    {
+      title: "Logo 1",
+      result: "",
+      image: "/thumbnails/PREVIOUS_WORKs_page-0001.jpg",
+      description: "",
+      videoId: "",
       category: "logo"
     },
-    { 
-      title: "Tech Channel Logo", 
-      result: "Professional", 
-      image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500&h=350&fit=crop",
-      description: "Tech-focused logo design",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+    {
+      title: "Logo 2",
+      result: "",
+      image: "/thumbnails/PREVIOUS_WORKs_page-0002.jpg",
+      description: "",
+      videoId: "",
       category: "logo"
     },
-    { 
-      title: "Business Logo Suite", 
-      result: "Multi-format", 
-      image: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=500&h=350&fit=crop",
-      description: "Complete logo package",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+    {
+      title: "Logo 3",
+      result: "",
+      image: "/thumbnails/PREVIOUS_WORKs_page-0003.jpg",
+      description: "",
+      videoId: "",
       category: "logo"
     },
-    { 
-      title: "Lifestyle Brand Logo", 
-      result: "Minimal & Clean", 
-      image: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=500&h=350&fit=crop",
-      description: "Elegant lifestyle logo",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+    {
+      title: "Logo 4",
+      result: "",
+      image: "/thumbnails/PREVIOUS_WORKs_page-0004.jpg",
+      description: "",
+      videoId: "",
       category: "logo"
     },
-    
-    // Channel Branding
-    { 
-      title: "Complete Channel Setup", 
-      result: "5K to 50K Subs", 
-      image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=500&h=350&fit=crop",
-      description: "Full channel optimization",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-      category: "branding"
+    {
+      title: "Logo 5",
+      result: "",
+      image: "/thumbnails/PREVIOUS_WORKs_page-0005.jpg",
+      description: "",
+      videoId: "",
+      category: "logo"
     },
-    { 
-      title: "Gaming Channel Rebrand", 
-      result: "10K to 100K", 
-      image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500&h=350&fit=crop",
-      description: "Complete rebranding project",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-      category: "branding"
+    {
+      title: "Logo 6",
+      result: "",
+      image: "/thumbnails/PREVIOUS_WORKs_page-0006.jpg",
+      description: "",
+      videoId: "",
+      category: "logo"
     },
-    { 
-      title: "Tech Channel Launch", 
-      result: "0 to 25K in 6mo", 
-      image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500&h=350&fit=crop",
-      description: "New channel setup & growth",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-      category: "branding"
+    {
+      title: "Logo 7",
+      result: "",
+      image: "/thumbnails/PREVIOUS_WORKs_page-0007.jpg",
+      description: "",
+      videoId: "",
+      category: "logo"
     },
-    { 
-      title: "Business Channel Brand", 
-      result: "Professional Setup", 
-      image: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=500&h=350&fit=crop",
-      description: "Corporate branding package",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-      category: "branding"
+    {
+      title: "Logo 8",
+      result: "",
+      image: "/thumbnails/PREVIOUS_WORKs_page-0008.jpg",
+      description: "",
+      videoId: "",
+      category: "logo"
     },
-    
-    // SEO Optimization
-    { 
-      title: "SEO Boost - Gaming", 
-      result: "500% Growth", 
-      image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500&h=350&fit=crop",
-      description: "Complete SEO overhaul",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-      category: "seo"
+    {
+      title: "Logo 9",
+      result: "",
+      image: "/thumbnails/PREVIOUS_WORKs_page-0009.jpg",
+      description: "",
+      videoId: "",
+      category: "logo"
     },
-    { 
-      title: "SEO Strategy - Tech", 
-      result: "Top 3 Rankings", 
-      image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500&h=350&fit=crop",
-      description: "Keyword optimization success",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
-      category: "seo"
-    },
-    { 
-      title: "Channel SEO Audit", 
-      result: "300% More Views", 
-      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&h=350&fit=crop",
-      description: "Full channel optimization",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
-      category: "seo"
-    },
-    { 
-      title: "Viral SEO Strategy", 
-      result: "1M+ Organic Views", 
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&h=350&fit=crop",
-      description: "Viral content optimization",
-      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
-      category: "seo"
+    {
+      title: "Logo 10",
+      result: "",
+      image: "/thumbnails/PREVIOUS_WORKs_page-0010.jpg",
+      description: "",
+      videoId: "",
+      category: "logo"
     }
   ];
 
@@ -383,10 +449,7 @@ export default function Portfolio() {
     { id: 'all', name: 'All Projects', icon: <Sparkles className="w-5 h-5" />, count: allPortfolio.length },
     { id: 'video-editing', name: 'Video Editing', icon: <Film className="w-5 h-5" />, count: allPortfolio.filter(p => p.category === 'video-editing').length },
     { id: 'thumbnail', name: 'Thumbnail Design', icon: <Palette className="w-5 h-5" />, count: allPortfolio.filter(p => p.category === 'thumbnail').length },
-    { id: 'graphic-design', name: 'Graphic Design', icon: <PenTool className="w-5 h-5" />, count: allPortfolio.filter(p => p.category === 'graphic-design').length },
-    { id: 'logo', name: 'Logo Design', icon: <Target className="w-5 h-5" />, count: allPortfolio.filter(p => p.category === 'logo').length },
-    { id: 'branding', name: 'Channel Branding', icon: <Layout className="w-5 h-5" />, count: allPortfolio.filter(p => p.category === 'branding').length },
-    { id: 'seo', name: 'SEO Optimization', icon: <Growth className="w-5 h-5" />, count: allPortfolio.filter(p => p.category === 'seo').length }
+    { id: 'logo', name: 'Logo Design', icon: <Target className="w-5 h-5" />, count: allPortfolio.filter(p => p.category === 'logo').length }
   ];
 
   const portfolio: PortfolioType[] = allPortfolio.slice(0, 6);
@@ -422,17 +485,6 @@ export default function Portfolio() {
   const closePortfolioPopup = () => {
     setSelectedPortfolio(null);
   };
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setAutoScrollPosition((prev) => {
-        const newPosition = prev + 1;
-        return newPosition >= reels.length ? 0 : newPosition;
-      });
-    }, 3000);
-    
-    return () => clearInterval(interval);
-  }, [reels.length]);
 
   const handleVideoClick = (reel: ReelType) => {
     setSelectedVideo(reel);
@@ -490,27 +542,12 @@ export default function Portfolio() {
             }
           }
 
-          @keyframes slideInLeft {
-            from {
-              opacity: 0;
-              transform: translateX(-30px);
-            }
-            to {
-              opacity: 1;
-              transform: translateX(0);
-            }
-          }
-
           .animate-fade-in-up {
             animation: fadeInUp 0.6s ease-out forwards;
           }
 
           .animate-scale-in {
             animation: scaleIn 0.5s ease-out forwards;
-          }
-
-          .animate-slide-in-left {
-            animation: slideInLeft 0.5s ease-out forwards;
           }
 
           .stagger-1 { animation-delay: 0.1s; opacity: 0; }
@@ -597,49 +634,34 @@ export default function Portfolio() {
               {filteredPortfolio.map((project, idx) => (
                 <div
                   key={idx}
-                  onClick={() => handlePortfolioClick(project)}
-                  className="group relative overflow-hidden rounded-2xl cursor-pointer border-2 border-gray-200 hover:border-emerald-400 transition-all duration-500 shadow-lg hover:shadow-2xl bg-white animate-fade-in-up"
+                  onClick={() => project.videoId && handlePortfolioClick(project)}
+                  className="group relative overflow-hidden rounded-xl cursor-pointer border-2 border-gray-200 hover:border-emerald-500 transition-all duration-300 shadow-lg hover:shadow-2xl bg-white animate-fade-in-up transform hover:scale-105"
                   style={{ animationDelay: `${(idx % 9) * 0.1}s`, opacity: 0 }}
                 >
-                  <div className="aspect-video overflow-hidden relative">
-                    <video
-                      ref={el => {
-                        if (el) videoRefs.current[`portfolio-${idx}`] = el;
-                      }}
-                      src={project.videoUrl}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                      loop
-                      muted
-                      playsInline
-                      onMouseEnter={(e) => {
-                        const target = e.target as HTMLVideoElement;
-                        target.play().catch((err: Error) => console.log('Play error:', err));
-                      }}
-                      onMouseLeave={(e) => {
-                        const target = e.target as HTMLVideoElement;
-                        target.pause();
-                      }}
-                    />
-                  </div>
-                  
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300 flex items-end p-6">
-                    <div>
-                      <div className="text-emerald-400 text-sm font-semibold mb-2 uppercase tracking-wide">
-                        {categories.find(c => c.id === project.category)?.name}
+                  <div className="aspect-video overflow-hidden relative bg-gray-900">
+                    {project.videoId ? (
+                      <div className="relative w-full h-full">
+                        <img
+                          src={getGDriveThumbnail(project.videoId)}
+                          alt={project.title}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.src = 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=500&h=350&fit=crop';
+                          }}
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/50 transition">
+                          <div className="w-16 h-16 rounded-full bg-emerald-500 flex items-center justify-center group-hover:scale-110 transition shadow-xl">
+                            <Play className="w-8 h-8 text-white ml-1" fill="white" />
+                          </div>
+                        </div>
                       </div>
-                      <h3 className="text-white text-2xl font-bold mb-2">{project.title}</h3>
-                      <p className="text-gray-300 text-sm">{project.description}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="absolute top-4 right-4 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg z-10">
-                    {project.result}
-                  </div>
-                  
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition z-20">
-                    <div className="w-16 h-16 rounded-full bg-emerald-500 flex items-center justify-center animate-pulse shadow-2xl">
-                      <Play className="w-8 h-8 text-white ml-1" fill="white" />
-                    </div>
+                    ) : (
+                      <img
+                        src={project.image}
+                        alt={project.title}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                    )}
                   </div>
                 </div>
               ))}
@@ -686,12 +708,12 @@ export default function Portfolio() {
         </section>
 
         {/* Video Popup */}
-        {selectedPortfolio && (
-          <div 
+        {selectedPortfolio && selectedPortfolio.videoId && (
+          <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
             onClick={closePortfolioPopup}
           >
-            <div 
+            <div
               className="relative w-full max-w-4xl animate-scale-in"
               onClick={(e) => e.stopPropagation()}
             >
@@ -702,19 +724,14 @@ export default function Portfolio() {
                 <X className="w-8 h-8" />
               </button>
               <div className="bg-white rounded-2xl overflow-hidden border-2 border-emerald-400 shadow-2xl">
-                <video
-                  src={selectedPortfolio.videoUrl}
-                  className="w-full aspect-video"
-                  controls
-                  autoPlay
-                />
-                <div className="p-6">
-                  <div className="text-emerald-500 text-sm font-semibold mb-2 uppercase">
-                    {categories.find(c => c.id === selectedPortfolio.category)?.name}
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{selectedPortfolio.title}</h3>
-                  <p className="text-emerald-500 font-semibold text-lg mb-2">{selectedPortfolio.result}</p>
-                  <p className="text-gray-600">{selectedPortfolio.description}</p>
+                <div className="aspect-video bg-black">
+                  <iframe
+                    src={getGDriveEmbedUrl(selectedPortfolio.videoId)}
+                    className="w-full h-full"
+                    allow="autoplay; encrypted-media"
+                    allowFullScreen
+                    title={selectedPortfolio.title}
+                  />
                 </div>
               </div>
             </div>
@@ -727,15 +744,6 @@ export default function Portfolio() {
   return (
     <div className="min-h-screen bg-white text-gray-900 overflow-x-hidden">
       <style>{`
-        @keyframes scroll {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
-
         @keyframes scroll-services {
           0% {
             transform: translateX(0);
@@ -743,12 +751,6 @@ export default function Portfolio() {
           100% {
             transform: translateX(-50%);
           }
-        }
-
-        .animate-scroll-reels {
-          display: flex;
-          gap: 1.5rem;
-          animation: scroll 40s linear infinite;
         }
 
         .scroll-services-container {
@@ -771,54 +773,50 @@ export default function Portfolio() {
         }
       `}</style>
 
-      {/* Navigation */}
-      <nav className="fixed w-full z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
-            <div className="flex items-center space-x-2">
-              <div className="text-3xl font-bold text-gray-900">
-                FAHAD<span className="text-gray-400">.</span>
-              </div>
-            </div>
-            
-            <div className="hidden md:flex items-center space-x-8">
-              <button onClick={() => scrollToSection('home')} className="text-gray-600 hover:text-gray-900 font-medium transition">Home</button>
-              <button onClick={() => scrollToSection('about')} className="text-gray-600 hover:text-gray-900 font-medium transition">About</button>
-              <button onClick={() => scrollToSection('services')} className="text-gray-600 hover:text-gray-900 font-medium transition">Services</button>
-              <button onClick={() => scrollToSection('portfolio')} className="text-gray-600 hover:text-gray-900 font-medium transition">Portfolio</button>
-              <button onClick={() => scrollToSection('testimonials')} className="text-gray-600 hover:text-gray-900 font-medium transition">Testimonials</button>
-              <a 
-                href="https://www.upwork.com/freelancers/~01b4bda82598a073e9" 
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-emerald-500 text-white px-6 py-2.5 rounded-lg hover:bg-emerald-600 transition font-medium"
-              >
-                Hire Me
-              </a>
+      {/* iPhone Notch-Style Navbar */}
+      <nav className={`fixed top-3 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-500 ${
+        scrollDirection === 'down' && isScrolled
+          ? 'scale-90'
+          : 'scale-100'
+      }`}>
+        <div className="bg-gray-900/95 backdrop-blur-xl rounded-full px-10 py-2.5 shadow-2xl border border-gray-700/50">
+          <div className="flex items-center space-x-10">
+            <div className="text-lg font-bold text-white mr-2">
+              FAHAD<span className="text-emerald-400">.</span>
             </div>
 
-            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden text-gray-900">
-              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            <div className="hidden lg:flex items-center space-x-8">
+              <button onClick={() => scrollToSection('home')} className="text-white hover:text-emerald-400 font-medium text-sm transition-colors duration-300">Home</button>
+              <button onClick={() => scrollToSection('about')} className="text-white hover:text-emerald-400 font-medium text-sm transition-colors duration-300">About</button>
+              <button onClick={() => scrollToSection('services')} className="text-white hover:text-emerald-400 font-medium text-sm transition-colors duration-300">Services</button>
+              <button onClick={() => scrollToSection('portfolio')} className="text-white hover:text-emerald-400 font-medium text-sm transition-colors duration-300">Portfolio</button>
+              <button onClick={() => scrollToSection('testimonials')} className="text-white hover:text-emerald-400 font-medium text-sm transition-colors duration-300">Testimonials</button>
+            </div>
+
+            <a
+              href="https://www.upwork.com/freelancers/~01b4bda82598a073e9"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-8 py-2 rounded-full hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300 font-bold text-sm shadow-lg hover:shadow-emerald-500/50 hover:scale-105 whitespace-nowrap inline-flex items-center"
+            >
+              Hire Me
+            </a>
+
+            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="lg:hidden text-white ml-2">
+              {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
 
+        {/* Mobile Menu Dropdown */}
         {isMenuOpen && (
-          <div className="md:hidden bg-white border-t border-gray-200">
-            <div className="px-4 pt-2 pb-4 space-y-3">
-              <button onClick={() => scrollToSection('home')} className="block text-gray-600 hover:text-gray-900 py-2 w-full text-left font-medium">Home</button>
-              <button onClick={() => scrollToSection('about')} className="block text-gray-600 hover:text-gray-900 py-2 w-full text-left font-medium">About</button>
-              <button onClick={() => scrollToSection('services')} className="block text-gray-600 hover:text-gray-900 py-2 w-full text-left font-medium">Services</button>
-              <button onClick={() => scrollToSection('portfolio')} className="block text-gray-600 hover:text-gray-900 py-2 w-full text-left font-medium">Portfolio</button>
-              <button onClick={() => scrollToSection('testimonials')} className="block text-gray-600 hover:text-gray-900 py-2 w-full text-left font-medium">Testimonials</button>
-              <a 
-                href="https://www.upwork.com/freelancers/~01b4bda82598a073e9" 
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block bg-emerald-500 text-white px-6 py-2.5 rounded-lg text-center font-medium"
-              >
-                Hire Me
-              </a>
+          <div className="lg:hidden absolute top-full left-0 right-0 mt-4 bg-gray-900/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-700/50 overflow-hidden">
+            <div className="px-6 py-4 space-y-3">
+              <button onClick={() => { scrollToSection('home'); setIsMenuOpen(false); }} className="block text-white hover:text-emerald-400 py-3 w-full text-left font-medium transition-colors">Home</button>
+              <button onClick={() => { scrollToSection('about'); setIsMenuOpen(false); }} className="block text-white hover:text-emerald-400 py-3 w-full text-left font-medium transition-colors">About</button>
+              <button onClick={() => { scrollToSection('services'); setIsMenuOpen(false); }} className="block text-white hover:text-emerald-400 py-3 w-full text-left font-medium transition-colors">Services</button>
+              <button onClick={() => { scrollToSection('portfolio'); setIsMenuOpen(false); }} className="block text-white hover:text-emerald-400 py-3 w-full text-left font-medium transition-colors">Portfolio</button>
+              <button onClick={() => { scrollToSection('testimonials'); setIsMenuOpen(false); }} className="block text-white hover:text-emerald-400 py-3 w-full text-left font-medium transition-colors">Testimonials</button>
             </div>
           </div>
         )}
@@ -894,9 +892,12 @@ export default function Portfolio() {
             {/* Right - Image */}
             <div className="relative">
               <div className="relative z-10">
-                <img 
-                  src=".\profile.jpg" 
+                <Image
+                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=600&fit=crop"
                   alt="Fahad"
+                  width={500}
+                  height={600}
+                  priority
                   className="w-full max-w-md mx-auto rounded-3xl shadow-2xl"
                 />
               </div>
@@ -908,78 +909,144 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* Recent Work Section */}
-      <section className="py-20 px-4 bg-gray-50 overflow-hidden">
-        <div className="max-w-7xl mx-auto mb-12">
-          <div className="text-center">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">Recent Work</h2>
-            <p className="text-xl text-gray-600">Professional video editing and optimization</p>
+      {/* About Section */}
+      <section id="about" className="py-20 px-4 bg-white border-t border-gray-100">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <div className="inline-block bg-emerald-500 text-white rounded-full px-6 py-2 mb-4 text-sm font-bold">
+              ⭐ TOP-RATED YOUTUBE SPECIALIST
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
+              Why Work With <span className="text-emerald-500">Me?</span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              I'm a dedicated YouTube Growth Specialist helping content creators and businesses achieve explosive growth through professional YouTube services. From channel management to SEO optimization and monetization strategies, I turn channels into thriving online businesses.
+            </p>
+          </div>
+
+          {/* Industries Section */}
+          <div className="bg-gradient-to-br from-gray-50 to-emerald-50/30 rounded-3xl p-8 md:p-12 border-2 border-emerald-200">
+            <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+              Industries I <span className="text-emerald-500">Specialize</span> In
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {['Tech & Gaming', 'Education & How-To', 'Business & Finance', 'Lifestyle & Vlog', 'Health & Fitness', 'Entertainment'].map((industry, idx) => (
+                <div key={idx} className="bg-white rounded-xl p-4 border border-emerald-200 hover:border-emerald-400 transition text-center font-semibold text-gray-700 hover:text-emerald-600 hover:shadow-lg">
+                  {industry}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
+      </section>
 
-        <div className="relative group overflow-hidden">
-          <div 
-            className="flex gap-6 animate-scroll-reels" 
-            style={{
-              width: 'fit-content'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.animationPlayState = 'paused';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.animationPlayState = 'running';
-            }}
-          >
-            {[...reels, ...reels].map((reel, idx) => (
-              <div 
-                key={idx}
-                onClick={() => handleVideoClick(reel)}
-                className="group/card relative overflow-hidden rounded-2xl border-2 border-emerald-200 hover:border-emerald-500 transition-all duration-500 hover:scale-105 cursor-pointer flex-shrink-0 shadow-lg"
-                style={{ width: '280px', height: '500px' }}
-              >
-                <video
-                  ref={el => {
-                    if (el) videoRefs.current[`reel-${idx}`] = el;
-                  }}
-                  src={reel.videoUrl}
-                  className="w-full h-full object-cover"
-                  loop
-                  muted
-                  playsInline
-                  onMouseEnter={(e) => {
-                    const target = e.target as HTMLVideoElement;
-                    target.play().catch((err: Error) => console.log('Play error:', err));
-                  }}
-                  onMouseLeave={(e) => {
-                    const target = e.target as HTMLVideoElement;
-                    target.pause();
-                  }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-60 group-hover/card:opacity-80 transition"></div>
-                
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/card:opacity-100 transition">
-                  <div className="w-16 h-16 rounded-full bg-emerald-500 flex items-center justify-center animate-pulse">
-                    <Play className="w-8 h-8 text-white ml-1" fill="white" />
-                  </div>
+      {/* Recent Work Section */}
+      <section className="py-20 px-4 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">Recent Work</h2>
+            <p className="text-xl text-gray-600">Professional video editing, thumbnails, and creative design</p>
+          </div>
+
+          {/* Video Editing Section */}
+          <div className="mb-20">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center">
+                  <Video className="w-6 h-6 text-white" />
                 </div>
-
-                <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
-                  <h3 className="text-white font-bold text-lg mb-1">{reel.title}</h3>
-                  <div className="flex items-center justify-end">
-                    <span className="bg-black/50 backdrop-blur-sm px-2 py-1 rounded text-sm text-white">{reel.duration}</span>
-                  </div>
+                <div>
+                  <h3 className="text-2xl md:text-3xl font-bold text-gray-900">Video Editing</h3>
+                  <p className="text-gray-600">Professional video editing and production</p>
                 </div>
               </div>
-            ))}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {reels.slice(0, 4).map((reel, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => handleVideoClick(reel)}
+                  className="group relative overflow-hidden rounded-2xl border-2 border-gray-200 hover:border-emerald-500 transition-all duration-500 cursor-pointer shadow-xl hover:shadow-2xl transform hover:scale-[1.02]"
+                >
+                  <div className="aspect-video relative bg-gray-900">
+                    <img
+                      src={getGDriveThumbnail(reel.videoId)}
+                      alt={reel.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      onError={(e) => {
+                        e.currentTarget.src = 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&h=450&fit=crop';
+                      }}
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/60 transition-all duration-500">
+                      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center group-hover:scale-125 transition-all duration-500 shadow-2xl">
+                        <Play className="w-10 h-10 text-white ml-1" fill="white" />
+                      </div>
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                      <h3 className="text-white font-bold text-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500">{reel.title}</h3>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Thumbnail Design Section */}
+          <div>
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
+                  <Palette className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-2xl md:text-3xl font-bold text-gray-900">Thumbnail Design</h3>
+                  <p className="text-gray-600">Eye-catching, high-CTR thumbnail designs</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {[
+                "/thumbnails/PREVIOUS_WORKs_page-0001.jpg",
+                "/thumbnails/PREVIOUS_WORKs_page-0002.jpg",
+                "/thumbnails/PREVIOUS_WORKs_page-0003.jpg",
+                "/thumbnails/PREVIOUS_WORKs_page-0004.jpg"
+              ].map((thumbnail, idx) => (
+                <div
+                  key={idx}
+                  className="group relative overflow-hidden rounded-2xl border-2 border-gray-200 hover:border-purple-500 transition-all duration-500 cursor-pointer shadow-xl hover:shadow-2xl transform hover:scale-[1.02]"
+                >
+                  <div className="aspect-video relative bg-gray-900">
+                    <img
+                      src={thumbnail}
+                      alt={`Thumbnail ${idx + 1}`}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      onError={(e) => {
+                        e.currentTarget.src = 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&h=450&fit=crop';
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-purple-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500">
+                      <div className="absolute bottom-6 left-6 right-6">
+                        <div className="flex items-center space-x-2">
+                          <CheckCircle className="w-5 h-5 text-purple-300" />
+                          <span className="text-white font-bold text-lg">Thumbnail Design {idx + 1}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
         {selectedVideo && (
-          <div 
+          <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
             onClick={closeVideoPopup}
           >
-            <div 
+            <div
               className="relative w-full max-w-4xl"
               onClick={(e) => e.stopPropagation()}
             >
@@ -990,17 +1057,14 @@ export default function Portfolio() {
                 <X className="w-8 h-8" />
               </button>
               <div className="bg-white rounded-2xl overflow-hidden border-2 border-emerald-400 shadow-2xl">
-                <video
-                  src={selectedVideo.videoUrl}
-                  className="w-full aspect-video"
-                  controls
-                  autoPlay
-                />
-                <div className="p-6">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{selectedVideo.title}</h3>
-                  <div className="flex items-center space-x-4 text-gray-600">
-                    <span>{selectedVideo.duration}</span>
-                  </div>
+                <div className="aspect-video bg-black">
+                  <iframe
+                    src={getGDriveEmbedUrl(selectedVideo.videoId)}
+                    className="w-full h-full"
+                    allow="autoplay; encrypted-media"
+                    allowFullScreen
+                    title={selectedVideo.title}
+                  />
                 </div>
               </div>
             </div>
@@ -1033,148 +1097,57 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* Services Section */}
-      <section id="services" className="py-20 px-4 bg-white">
+      {/* Portfolio Section - Success Stories */}
+      <section id="portfolio" className="py-20 px-4 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">Complete YouTube Solutions</h2>
-            <p className="text-xl text-gray-600">Everything you need to dominate YouTube in 2025</p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
-            {services.slice(0, 3).map((service, idx) => (
-              <div 
-                key={idx}
-                className="bg-white rounded-2xl p-6 border-2 border-gray-200 hover:border-emerald-400 transition-all duration-300 group cursor-pointer hover:transform hover:scale-105 hover:shadow-xl"
-              >
-                <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl flex items-center justify-center text-white mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all shadow-lg">
-                  {service.icon}
-                </div>
-                
-                <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-emerald-500 transition">{service.title}</h3>
-                <p className="text-gray-600 mb-4">{service.description}</p>
-                
-                <div className="space-y-2 mb-6">
-                  {service.features.map((feature, i) => (
-                    <div key={i} className="flex items-center space-x-2">
-                      <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                      <span className="text-gray-600 text-sm">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-                  <span className="text-emerald-500 font-bold text-xl">{service.price}</span>
-                  <a 
-                    href="https://www.upwork.com/freelancers/~01b4bda82598a073e9" 
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:shadow-lg transition flex items-center space-x-1"
-                  >
-                    <span>Order Now</span>
-                    <ChevronRight className="w-4 h-4" />
-                  </a>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="relative group/services overflow-hidden">
-            <div 
-              className="flex gap-6 scroll-services-container" 
-              style={{
-                width: 'fit-content'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.animationPlayState = 'paused';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.animationPlayState = 'running';
-              }}
-            >
-              {[...services.slice(3), ...services.slice(3)].map((service, idx) => (
-                <div 
-                  key={idx}
-                  className="bg-white rounded-2xl p-6 border-2 border-gray-200 hover:border-emerald-400 transition-all duration-300 group/card cursor-pointer hover:transform hover:scale-105 hover:shadow-xl flex-shrink-0"
-                  style={{ width: '350px' }}
-                >
-                  <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl flex items-center justify-center text-white mb-4 group-hover/card:scale-110 group-hover/card:rotate-3 transition-all shadow-lg">
-                    {service.icon}
-                  </div>
-                  
-                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover/card:text-emerald-500 transition">{service.title}</h3>
-                  <p className="text-gray-600 mb-4">{service.description}</p>
-                  
-                  <div className="space-y-2 mb-6">
-                    {service.features.map((feature, i) => (
-                      <div key={i} className="flex items-center space-x-2">
-                        <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                        <span className="text-gray-600 text-sm">{feature}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-                    <span className="text-emerald-500 font-bold text-xl">{service.price}</span>
-                    <a 
-                      href="https://www.upwork.com/freelancers/~01b4bda82598a073e9" 
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:shadow-lg transition flex items-center space-x-1"
-                    >
-                      <span>Order Now</span>
-                      <ChevronRight className="w-4 h-4" />
-                    </a>
-                  </div>
-                </div>
-              ))}
+          <div className="text-center mb-16">
+            <div className="inline-block bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-full px-6 py-2 mb-4 text-sm font-bold">
+              ⭐ SUCCESS STORIES
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Portfolio Section */}
-      <section id="portfolio" className="py-20 px-4 bg-gray-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">Success Stories</h2>
-            <p className="text-xl text-gray-600">Real results from real clients - proven track record</p>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
+              Real Results from <span className="text-emerald-500">Real Clients</span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Proven track record of transforming channels and delivering measurable growth. See how I've helped creators achieve their YouTube dreams.
+            </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 mb-12">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
             {portfolio.map((project, idx) => (
-              <div 
+              <div
                 key={idx}
-                onClick={() => handlePortfolioClick(project)}
-                className="group relative overflow-hidden rounded-2xl cursor-pointer border-2 border-gray-200 hover:border-emerald-400 transition-all duration-500 shadow-lg"
+                onClick={() => project.videoId && handlePortfolioClick(project)}
+                className="group relative overflow-hidden rounded-2xl cursor-pointer border-2 border-gray-200 hover:border-emerald-500 transition-all duration-500 shadow-xl hover:shadow-2xl transform hover:scale-[1.03] bg-white"
               >
-                <div className="aspect-video overflow-hidden relative">
-                  <video
-                    ref={el => {
-                      if (el) videoRefs.current[`portfolio-home-${idx}`] = el;
-                    }}
-                    src={project.videoUrl}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    loop
-                    muted
-                    playsInline
-                    autoPlay
-                  />
+                <div className="aspect-video overflow-hidden relative bg-gray-900">
+                  {project.videoId ? (
+                    <div className="relative w-full h-full">
+                      <img
+                        src={getGDriveThumbnail(project.videoId)}
+                        alt={project.title}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        onError={(e) => {
+                          e.currentTarget.src = 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=500&h=350&fit=crop';
+                        }}
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/60 transition-all duration-500">
+                        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center group-hover:scale-125 transition-all duration-500 shadow-2xl">
+                          <Play className="w-10 h-10 text-white ml-1" fill="white" />
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                  )}
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300 flex items-end p-6">
-                  <div>
-                    <h3 className="text-white text-2xl font-bold mb-2">{project.title}</h3>
-                    <p className="text-emerald-300 font-semibold text-lg mb-1">{project.result}</p>
-                    <p className="text-gray-300 text-sm">{project.description}</p>
-                  </div>
-                </div>
-                <div className="absolute top-4 right-4 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg z-10">
-                  {project.result}
-                </div>
-                
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition z-20">
-                  <div className="w-16 h-16 rounded-full bg-emerald-500 flex items-center justify-center animate-pulse">
-                    <Play className="w-8 h-8 text-white ml-1" fill="white" />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent p-6 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                  <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    <CheckCircle className="w-5 h-5 text-emerald-400" />
+                    <span className="text-white font-semibold">View Project</span>
                   </div>
                 </div>
               </div>
@@ -1184,22 +1157,22 @@ export default function Portfolio() {
           <div className="text-center">
             <button
               onClick={openPortfolioPage}
-              className="inline-flex items-center space-x-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:shadow-2xl transition transform hover:scale-105"
+              className="inline-flex items-center space-x-3 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-10 py-5 rounded-xl text-lg font-bold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1"
             >
               <Award className="w-6 h-6" />
-              <span>View All Portfolio</span>
+              <span>View Complete Portfolio</span>
               <ChevronRight className="w-5 h-5" />
             </button>
           </div>
         </div>
       </section>
 
-      {selectedPortfolio && (
-        <div 
+      {selectedPortfolio && selectedPortfolio.videoId && (
+        <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
           onClick={closePortfolioPopup}
         >
-          <div 
+          <div
             className="relative w-full max-w-4xl"
             onClick={(e) => e.stopPropagation()}
           >
@@ -1210,51 +1183,114 @@ export default function Portfolio() {
               <X className="w-8 h-8" />
             </button>
             <div className="bg-white rounded-2xl overflow-hidden border-2 border-emerald-400 shadow-2xl">
-              <video
-                src={selectedPortfolio.videoUrl}
-                className="w-full aspect-video"
-                controls
-                autoPlay
-              />
-              <div className="p-6">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">{selectedPortfolio.title}</h3>
-                <p className="text-emerald-500 font-semibold text-lg mb-2">{selectedPortfolio.result}</p>
-                <p className="text-gray-600">{selectedPortfolio.description}</p>
+              <div className="aspect-video bg-black">
+                <iframe
+                  src={getGDriveEmbedUrl(selectedPortfolio.videoId)}
+                  className="w-full h-full"
+                  allow="autoplay; encrypted-media"
+                  allowFullScreen
+                  title={selectedPortfolio.title}
+                />
               </div>
             </div>
           </div>
         </div>
       )}
 
+      {/* Services Section */}
+      <section id="services" className="py-20 px-4 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <div className="inline-block bg-emerald-100 text-emerald-700 rounded-full px-6 py-2 mb-4 text-sm font-bold">
+              💼 PROFESSIONAL SERVICES
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
+              Complete YouTube <span className="text-emerald-500">Solutions</span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Everything you need to dominate YouTube in 2025 - from setup to monetization
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {services.slice(0, 6).map((service, idx) => (
+              <div
+                key={idx}
+                className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-emerald-400 transition-all duration-500 group cursor-pointer hover:transform hover:scale-[1.03] hover:shadow-2xl"
+              >
+                <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-xl flex items-center justify-center text-white mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all shadow-lg">
+                  {service.icon}
+                </div>
+
+                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-emerald-500 transition min-h-[60px]">{service.title}</h3>
+                <p className="text-gray-600 mb-6 leading-relaxed">{service.description}</p>
+
+                <div className="space-y-3 mb-8">
+                  {service.features.map((feature, i) => (
+                    <div key={i} className="flex items-center space-x-2">
+                      <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                      <span className="text-gray-700 text-sm font-medium">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex items-center justify-between pt-6 border-t-2 border-gray-100">
+                  <div>
+                    <div className="text-xs text-gray-500 mb-1">Starting at</div>
+                    <span className="text-emerald-500 font-bold text-2xl">{service.price}</span>
+                  </div>
+                  <a
+                    href="https://www.upwork.com/freelancers/~01b4bda82598a073e9"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-6 py-3 rounded-xl text-sm font-bold hover:shadow-lg hover:shadow-emerald-500/50 transition-all duration-300 flex items-center space-x-2 group-hover:scale-105"
+                  >
+                    <span>Order</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Testimonials Section */}
       <section id="testimonials" className="py-20 px-4 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">Client Reviews</h2>
-            <p className="text-xl text-gray-600">Don't just take my word for it - hear from satisfied clients</p>
+          <div className="text-center mb-16">
+            <div className="inline-block bg-emerald-100 text-emerald-700 rounded-full px-6 py-2 mb-4 text-sm font-bold">
+              ⭐ CLIENT TESTIMONIALS
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
+              What My <span className="text-emerald-500">Clients Say</span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Don't just take my word for it - hear from satisfied clients who've experienced real growth
+            </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, idx) => (
-              <div 
+              <div
                 key={idx}
-                className="bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-emerald-400 transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                className="bg-gradient-to-br from-white to-emerald-50/30 rounded-2xl p-8 border-2 border-gray-200 hover:border-emerald-400 transition-all duration-500 transform hover:scale-[1.03] hover:shadow-2xl group"
               >
-                <div className="flex items-center space-x-1 mb-4">
+                <div className="flex items-center space-x-1 mb-6">
                   {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                    <Star key={i} className="w-6 h-6 text-yellow-400 fill-yellow-400 group-hover:scale-110 transition-transform duration-300" style={{ transitionDelay: `${i * 50}ms` }} />
                   ))}
                 </div>
-                
-                <p className="text-gray-600 mb-6 italic leading-relaxed">"{testimonial.content}"</p>
-                
-                <div className="flex items-center space-x-3">
-                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+
+                <p className="text-gray-700 mb-8 italic leading-relaxed text-lg">"{testimonial.content}"</p>
+
+                <div className="flex items-center space-x-4 pt-6 border-t border-gray-200">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
                     {testimonial.avatar}
                   </div>
                   <div>
-                    <p className="text-gray-900 font-semibold text-lg">{testimonial.name}</p>
-                    <p className="text-emerald-500 text-sm">{testimonial.role}</p>
+                    <p className="text-gray-900 font-bold text-lg">{testimonial.name}</p>
+                    <p className="text-emerald-600 text-sm font-semibold">{testimonial.role}</p>
                   </div>
                 </div>
               </div>
@@ -1264,86 +1300,96 @@ export default function Portfolio() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gray-50">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="bg-white rounded-3xl p-12 border-2 border-emerald-400 shadow-2xl">
-            <div className="inline-block bg-emerald-500 text-white rounded-full px-6 py-2 mb-6 text-sm font-bold">
-              🎯 Limited Slots Available
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-              Ready to <span className="text-emerald-500">10X</span> Your Channel?
-            </h2>
-            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-              Join 200+ successful creators who transformed their channels into profitable businesses. Let's create your YouTube success story together!
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <a 
-                href="https://www.upwork.com/freelancers/~01b4bda82598a073e9" 
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center space-x-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:shadow-2xl transition transform hover:scale-105"
-              >
-                <span>Start Growing Today</span>
-                <ChevronRight className="w-5 h-5" />
-              </a>
-              <a 
-                href="https://www.upwork.com/freelancers/~01b4bda82598a073e9" 
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center space-x-2 border-2 border-emerald-500 text-emerald-500 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-emerald-50 transition"
-              >
-                <span>Schedule Consultation</span>
-              </a>
-            </div>
+      <section className="relative py-20 px-4 bg-gradient-to-br from-emerald-500 via-emerald-600 to-emerald-700 overflow-hidden">
+        {/* Decorative Elements */}
+        <div className="absolute top-0 left-0 w-full h-full opacity-10">
+          <div className="absolute top-10 left-10 w-72 h-72 bg-white rounded-full blur-3xl"></div>
+          <div className="absolute bottom-10 right-10 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+        </div>
+
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <div className="inline-block bg-white/20 backdrop-blur-sm text-white rounded-full px-6 py-2 mb-6 text-sm font-bold border border-white/30">
+            🎯 Limited Slots Available
+          </div>
+          <h2 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
+            Ready to <span className="text-emerald-200">10X</span> Your Channel?
+          </h2>
+          <p className="text-xl text-emerald-50 mb-10 leading-relaxed max-w-2xl mx-auto">
+            Join 200+ successful creators who transformed their channels into profitable businesses. Let's create your YouTube success story together!
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <a
+              href="https://www.upwork.com/freelancers/~01b4bda82598a073e9"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center space-x-2 bg-white text-emerald-600 px-10 py-5 rounded-xl text-lg font-bold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1"
+            >
+              <span>Start Growing Today</span>
+              <ChevronRight className="w-5 h-5" />
+            </a>
+            <a
+              href="https://www.upwork.com/freelancers/~01b4bda82598a073e9"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center space-x-2 border-2 border-white text-white px-10 py-5 rounded-xl text-lg font-bold hover:bg-white/10 transition-all duration-300 backdrop-blur-sm"
+            >
+              <span>Schedule Consultation</span>
+            </a>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 bg-white border-t border-gray-200">
+      <footer className="py-16 px-4 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-8 mb-8">
+          <div className="grid md:grid-cols-3 gap-12 mb-12">
             <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <span className="text-3xl font-bold text-gray-900">FAHAD<span className="text-gray-400">.</span></span>
+              <div className="flex items-center space-x-2 mb-6">
+                <span className="text-4xl font-bold text-white">FAHAD<span className="text-emerald-400">.</span></span>
               </div>
-              <p className="text-gray-600 leading-relaxed">
-                Professional YouTube Growth Specialist helping creators build successful channels since 2019.
+              <p className="text-gray-300 leading-relaxed mb-6">
+                Professional YouTube Growth Specialist helping creators build successful channels since 2019. Transforming visions into viral realities.
               </p>
-            </div>
-            
-            <div>
-              <h3 className="text-gray-900 font-bold mb-4">Quick Links</h3>
-              <div className="space-y-2">
-                <button onClick={() => scrollToSection('services')} className="block text-gray-600 hover:text-emerald-500 transition">Services</button>
-                <button onClick={openPortfolioPage} className="block text-gray-600 hover:text-emerald-500 transition">Portfolio</button>
-                <button onClick={() => scrollToSection('testimonials')} className="block text-gray-600 hover:text-emerald-500 transition">Reviews</button>
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></div>
+                <span className="text-emerald-400 text-sm font-semibold">Available for new projects</span>
               </div>
             </div>
 
             <div>
-              <h3 className="text-gray-900 font-bold mb-4">Connect</h3>
-              <div className="flex space-x-3">
-                <a href="#" className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center hover:bg-emerald-500 hover:border-emerald-500 hover:text-white transition">
-                  <Facebook className="w-5 h-5" />
-                </a>
-                <a href="#" className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center hover:bg-emerald-500 hover:border-emerald-500 hover:text-white transition">
-                  <Instagram className="w-5 h-5" />
-                </a>
-                <a href="#" className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center hover:bg-emerald-500 hover:border-emerald-500 hover:text-white transition">
-                  <Linkedin className="w-5 h-5" />
-                </a>
-                <a href="#" className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center hover:bg-emerald-500 hover:border-emerald-500 hover:text-white transition">
-                  <Youtube className="w-5 h-5" />
-                </a>
+              <h3 className="text-white font-bold mb-6 text-xl">Quick Links</h3>
+              <div className="space-y-3">
+                <button onClick={() => scrollToSection('services')} className="block text-gray-300 hover:text-emerald-400 transition-colors duration-300 font-medium">→ Services</button>
+                <button onClick={openPortfolioPage} className="block text-gray-300 hover:text-emerald-400 transition-colors duration-300 font-medium">→ Portfolio</button>
+                <button onClick={() => scrollToSection('testimonials')} className="block text-gray-300 hover:text-emerald-400 transition-colors duration-300 font-medium">→ Reviews</button>
+                <button onClick={() => scrollToSection('about')} className="block text-gray-300 hover:text-emerald-400 transition-colors duration-300 font-medium">→ About</button>
               </div>
+            </div>
+
+            <div>
+              <h3 className="text-white font-bold mb-6 text-xl">Let's Connect</h3>
+              <p className="text-gray-300 mb-6 leading-relaxed">Ready to grow your YouTube channel? Let's make it happen together.</p>
+              <a
+                href="https://www.upwork.com/freelancers/~01b4bda82598a073e9"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center space-x-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-6 py-3 rounded-lg hover:shadow-lg hover:shadow-emerald-500/50 transition-all duration-300 transform hover:scale-105 font-bold"
+              >
+                <span>Hire on Upwork</span>
+                <ChevronRight className="w-5 h-5" />
+              </a>
             </div>
           </div>
 
-          <div className="border-t border-gray-200 pt-8 text-center">
-            <p className="text-gray-500">
-              © 2025 Fahad - YouTube Growth Specialist. All rights reserved.
-            </p>
+          <div className="border-t border-gray-700 pt-8">
+            <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+              <p className="text-gray-400 text-sm">
+                © 2025 Fahad - YouTube Growth Specialist. All rights reserved.
+              </p>
+              <p className="text-gray-400 text-sm">
+                Crafted with <span className="text-emerald-400">♥</span> for YouTube creators worldwide
+              </p>
+            </div>
           </div>
         </div>
       </footer>

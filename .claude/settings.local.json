@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(cd:*)",
+      "Bash(for:*)",
+      "Bash(do mv \"$f\" \"$f// /_\")",
+      "Bash(done)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
